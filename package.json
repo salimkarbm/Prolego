@@ -4,6 +4,9 @@
   "description": "Prolego is a Robust web application for predicting student academic performance, it offers to contribute to the reduction of academic dropout and failure in educational institutes by predicting student's academic performance including drop off rate, academic success, to identify students at risk at an early stage of their academic path, so that strategies to support them can be put into place, in order to help Educators not only to focus more on bright students but also to initially identify students with low academic achievement and find ways to support them.",
   "main": "server.js",
   "scripts": {
+    "lint": "eslint --ext .ts . --fix",
+    "format": "npm run lint && npm run prettier",
+    "prettier": "prettier --config .prettierrc --ignore-path .gitignore  --write './src/**/*.+(js|ts)'",
     "start": "node ./dist/server.js",
     "dev": " npm run tsc && nodemon --files ./src/server.ts",
     "tsc": "tsc"
@@ -25,7 +28,16 @@
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/node": "^17.0.34",
+    "@typescript-eslint/eslint-plugin": "^5.18.0",
+    "@typescript-eslint/parser": "^5.18.0",
+    "eslint": "^8.15.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "nodemon": "^2.0.16",
+    "prettier": "^2.6.2",
     "ts-node": "^10.7.0"
   }
 }
