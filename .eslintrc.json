@@ -15,17 +15,22 @@
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
+    "import/no-mutable-exports": "off",
     "class-methods-use-this": "off",
     "import/extensions": [
-        "error","ignorePackages",{
-          "js": "never",
-          "ts": "never"
-}],
-"import/no-extraneous-dependencies": [
-    "error", {
-       "devDependencies": true
-    }
-]
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "ts": "never"
+      }
+    ],
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true
+      }
+    ]
   },
   "settings": {
     "import/resolver": {

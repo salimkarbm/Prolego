@@ -2,7 +2,7 @@ import supertest from 'supertest';
 
 import app from '../server';
 
-describe('Test server', () => {
+describe('Test server connection', () => {
   it('it expects server to be running', async (): Promise<void> => {
     const request = supertest(app);
     const response = await request.get('/');

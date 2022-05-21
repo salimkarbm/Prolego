@@ -1,0 +1,16 @@
+{
+  "dev": {
+    "driver": "pg",
+    "host": "127.0.0.1",
+    "database": "prolego",
+    "user": "admin",
+    "password": "adminpassword"
+  },
+  "test": {
+    "driver": "pg",
+    "host": "127.0.0.1",
+    "database": "prolego_test",
+    "user": "admin",
+    "password": "adminpassword"
+  }
+}
