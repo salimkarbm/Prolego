@@ -1,10 +1,3 @@
 /* Replace with your SQL commands */
+DROP TABLE if exists users
 
-
-CREATE TABLE users (
-   id SERIAL PRIMARY KEY,
-   email VARCHAR(50),
-   firstname VARCHAR(50),
-   lastname VARCHAR(50), 
-   password VARCHAR(100)
-)

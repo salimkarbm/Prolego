@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import client from '../config/database';
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
 
 export type User = {
   id?: number;
@@ -11,7 +11,8 @@ export type User = {
   password: string;
 };
 
-const pepper: 
+const pepper: string | undefined = process.env.BCRYPT_PASSWORD;
+const saltRounds = parseInt(process.env.SALT_ROUNDS as string, 10);
 
 export class UserStore {
   async getUser(): Promise<User[]> {
@@ -39,6 +40,59 @@ export class UserStore {
       return userId;
     } catch (error) {
       throw new Error(`Can't find User with this ${id}`);
+    }
+  }
+
+  async createUser(user: User): Promise<User[]> {
+    try {
+      const conn = await client.connect();
+      const sql =
+        'INSERT INTO users (email, first_name, last_name, password) VALUES($1, $2, $3, $4) RETURNING *';
+      const hash = bcrypt.hashSync(user.password + pepper, saltRounds);
+      const result = await conn.query(sql, [
+        user.email,
+        user.firstname,
+        user.lastname,
+        hash,
+      ]);
+      conn.release();
+      const createdUser = result.rows;
+      return createdUser;
+    } catch (error) {
+      throw new Error(
+        `Could not add new user ${user.firstname}. Error: ${error}`
+      );
+    }
+  }
+
+  async authenticate(username: string, password: string): Promise<User | null> {
+    try {
+      const conn = await client.connect();
+      const sql = 'SELECT password FROM users WHERE username =($1)';
+      const result = await conn.query(sql, [username]);
+      if (result.rows.length) {
+        const passDigest = result.rows[0];
+        if (bcrypt.compareSync(password + pepper, passDigest)) {
+          const sqlz = 'SELECT * FROM users WHERE username = ($1)';
+          const Userauth = await conn.query(sqlz, [username]);
+          return Userauth.rows[0];
+        }
+      }
+      conn.release();
+      return null;
+    } catch (error) {
+      throw new Error(`Can not authenticate User ${error}`);
+    }
+  }
+
+  async deleteUser(id: number): Promise<boolean> {
+    try {
+      const conn = await client.connect();
+      const sql = 'DELETE FROM users WHERE id=($1)';
+      const result = await conn.query(sql, [id]);
+      return !result;
+    } catch (error) {
+      throw new Error(`unable delete user (${id}): ${error}`);
     }
   }
 }
