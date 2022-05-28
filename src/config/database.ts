@@ -38,6 +38,7 @@ if (NODE_ENV === 'development') {
 }
 
 // Listen for server connections
+
 export default {
   client,
   POSTGRES_DB,
