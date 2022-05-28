@@ -15,7 +15,7 @@ const {
 
 let client: Pool;
 
-if (NODE_ENV === 'dev') {
+if (NODE_ENV === 'development') {
   console.log('dev');
   client = new Pool({
     host: POSTGRES_HOST,
@@ -37,4 +37,13 @@ if (NODE_ENV === 'dev') {
   client = new Pool({});
 }
 
-export default client;
+// Listen for server connections
+export default {
+  client,
+  POSTGRES_DB,
+  POSTGRES_USER,
+  POSTGRES_HOST,
+  POSTGRES_PORT,
+  POSTGRES_TEST_DB,
+  POSTGRES_PASSWORD,
+};
