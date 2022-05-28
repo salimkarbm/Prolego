@@ -8,7 +8,7 @@ const pg_1 = require("pg");
 dotenv_1.default.config();
 const { NODE_ENV, POSTGRES_DB, POSTGRES_USER, POSTGRES_HOST, POSTGRES_PORT, POSTGRES_TEST_DB, POSTGRES_PASSWORD, } = process.env;
 let client;
-if (NODE_ENV === 'dev') {
+if (NODE_ENV === 'development') {
     console.log('dev');
     client = new pg_1.Pool({
         host: POSTGRES_HOST,
@@ -31,4 +31,13 @@ else if (NODE_ENV === 'test') {
 else {
     client = new pg_1.Pool({});
 }
-exports.default = client;
+// Listen for server connections
+exports.default = {
+    client,
+    POSTGRES_DB,
+    POSTGRES_USER,
+    POSTGRES_HOST,
+    POSTGRES_PORT,
+    POSTGRES_TEST_DB,
+    POSTGRES_PASSWORD,
+};
