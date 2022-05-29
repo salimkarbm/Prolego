@@ -8,7 +8,7 @@
     "format": "npm run lint && npm run prettier",
     "prettier": "prettier --config .prettierrc --ignore-path .gitignore  --write './src/**/*.+(js|ts)'",
     "jasmine": "jasmine",
-    "test": "npm run tsc && NODE_ENV=test npm run jasmine",
+    "test": "npm run tsc && NODE_ENV=test db-migrate --env test up && npm run jasmine",
     "start": "node ./dist/server.js",
     "dev": " npm run tsc && nodemon --files ./src/server.ts",
     "prod": "NODE_ENV=production nodemon ./dist/server.js",
