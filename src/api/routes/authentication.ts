@@ -1,6 +1,6 @@
 import express from 'express';
 import { check } from 'express-validator';
-import create from '../controllers/authentication';
+import { create, authenticate } from '../controllers/authentication';
 
 const authRoutes = (app: express.Application) => {
   app.post(
@@ -31,6 +31,25 @@ const authRoutes = (app: express.Application) => {
         .isEmpty(),
     ],
     create
+  );
+  app.post(
+    '/api/v1/login',
+    [
+      check('email', 'Email is required')
+        .isEmail()
+        .trim()
+        .escape()
+        .normalizeEmail()
+        .not()
+        .isEmpty(),
+      check('password', 'Password is required')
+        .isLength({ min: 5 })
+        .trim()
+        .escape()
+        .not()
+        .isEmpty(),
+    ],
+    authenticate
   );
 };
 

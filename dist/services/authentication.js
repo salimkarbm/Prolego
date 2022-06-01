@@ -27,7 +27,7 @@ class AuthService {
             };
             try {
                 const conn = yield database_1.default.client.connect();
-                const sql = 'INSERT INTO users (firstname, lastname, password_digest, email,roles) VALUES($1, $2, $3, $4, user) RETURNING * ';
+                const sql = 'INSERT INTO users (firstname, lastname, password_digest, email) VALUES($1, $2, $3, $4) RETURNING * ';
                 const hash = yield bcrypt_1.default.hash(newUser.password + bcryptCredentials_1.pepper, bcryptCredentials_1.saltRound);
                 const result = yield conn.query(sql, [
                     newUser.firstName,
@@ -40,6 +40,26 @@ class AuthService {
             }
             catch (err) {
                 throw new appError_1.default(`Unable to create user ${newUser.firstName},`, 400);
+            }
+        });
+    }
+    authenticate(email, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const conn = yield database_1.default.client.connect();
+                const sql = `SELECT id, email, password_digest FROM users WHERE email=$1`;
+                const result = yield conn.query(sql, [email]);
+                if (result.rows.length > 0) {
+                    const user = result.rows[0];
+                    if (yield bcrypt_1.default.compare(password + bcryptCredentials_1.pepper, user.password_digest)) {
+                        return user;
+                    }
+                    return null;
+                }
+                return null;
+            }
+            catch (err) {
+                throw new appError_1.default(`Unable to authenticate user`, 400);
             }
         });
     }
