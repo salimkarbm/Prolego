@@ -31,10 +31,23 @@ describe('Test users endpoints', () => {
             .send({
             firstname: 'UserOne',
             lastname: 'User',
-            email: 'One@example.com',
+            email: 'user@example.com',
             password: 'pass1',
         });
         expect(result.body.status).toEqual('success');
         expect(result.type).toEqual('application/json');
+    }));
+    fit('login endpoint should login the users', () => __awaiter(void 0, void 0, void 0, function* () {
+        const request = (0, supertest_1.default)(server_1.default);
+        const result = yield request
+            .post('/api/v1/login')
+            .set('Accept', 'application/json')
+            .send({
+            email: 'user@example.com',
+            password: 'pass112',
+        });
+        expect(result.body.status).toEqual('success');
+        expect(result.type).toEqual('application/json');
+        expect(result.body.token).toBeInstanceOf(String);
     }));
 });

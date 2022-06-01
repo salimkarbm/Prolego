@@ -7,5 +7,7 @@ export interface User {
   role?: string;
   active?: boolean;
 }
-
-export default User;
+export interface LoginUser {
+  email: string;
+  password: string;
+}
