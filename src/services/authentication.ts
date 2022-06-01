@@ -15,7 +15,7 @@ class AuthService {
     try {
       const conn = await DB.client.connect();
       const sql =
-        'INSERT INTO users (firstname, lastname, password_digest, email,roles) VALUES($1, $2, $3, $4, user) RETURNING * ';
+        'INSERT INTO users (firstname, lastname, password_digest, email,roles) VALUES($1, $2, $3, $4) RETURNING * ';
       const hash = await bcrypt.hash(newUser.password + pepper, saltRound);
 
       const result = await conn.query(sql, [
