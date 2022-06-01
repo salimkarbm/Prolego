@@ -1,10 +1,11 @@
-export type User = {
+export interface User {
   id?: number;
+  firstname: string;
+  lastname: string;
+  password: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  password_digest: string;
   role?: string;
-};
+  active?: boolean;
+}
 
 export default User;

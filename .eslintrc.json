@@ -16,6 +16,7 @@
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
     "no-param-reassign": "off",
+    "func-names": "off",
     "import/no-mutable-exports": "off",
     "class-methods-use-this": "off",
     "import/extensions": [

@@ -1,7 +1,7 @@
 import DB from '../config/database';
 import User from '../utils/interface/user';
 
-export class UserStore {
+class UserStore {
   async getUserById(id: number): Promise<User[]> {
     try {
       const sql = 'SELECT * FROM users WHERE id =($1)';
@@ -15,3 +15,5 @@ export class UserStore {
     }
   }
 }
+
+export default UserStore;

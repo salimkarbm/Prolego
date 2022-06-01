@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import User from '../../utils/interface/user';
-import { UserStore } from '../../model/user';
+import UserStore from '../../models/user';
 
 const users = new UserStore();
 
