@@ -1,5 +1,6 @@
 import DB from '../config/database';
-import User from '../utils/interface/user';
+import { User } from '../utils/interface/user';
+import AppError from '../utils/errors/appError';
 
 class UserStore {
   async getUserById(id: number): Promise<User[]> {
@@ -10,8 +11,8 @@ class UserStore {
       conn.release();
       const user = result.rows;
       return user;
-    } catch (error) {
-      throw new Error(`Cannot find this User with id: ${id}, Error ${error}.`);
+    } catch (err) {
+      throw new AppError(`Cannot find this User with id: Err ${err}.`, 400);
     }
   }
 }

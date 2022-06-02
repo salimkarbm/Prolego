@@ -12,24 +12,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const user_1 = __importDefault(require("../../models/user"));
-const appError_1 = __importDefault(require("../../utils/errors/appError"));
-const users = new user_1.default();
-const getUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const id = Number(req.params.id);
-        const userId = yield users.getUserById(id);
-        if (userId.length === 0)
-            return next(new appError_1.default('user with this email id already exist', 400));
-        const response = {
-            status: 'success',
-            statusCode: 200,
-            response: userId,
-        };
-        return res.status(200).json(response);
+const database_1 = __importDefault(require("../config/database"));
+const appError_1 = __importDefault(require("../utils/errors/appError"));
+class UserStore {
+    getUserById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const sql = 'SELECT * FROM users WHERE id =($1)';
+                const conn = yield database_1.default.client.connect();
+                const result = yield conn.query(sql, [id]);
+                conn.release();
+                const user = result.rows;
+                return user;
+            }
+            catch (err) {
+                throw new appError_1.default(`Cannot find this User with id: Err ${err}.`, 400);
+            }
+        });
     }
-    catch (error) {
-        return res.status(500).json(error);
-    }
-});
-exports.default = getUserById;
+}
+exports.default = UserStore;

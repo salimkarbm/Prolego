@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const errorsHandler_1 = __importDefault(require("./utils/errors/errorsHandler"));
 const appError_1 = __importDefault(require("./utils/errors/appError"));
+const authentication_1 = __importDefault(require("./api/routes/authentication"));
 const user_1 = __importDefault(require("./api/routes/user"));
 process.on('uncaughtException', (err) => {
     console.log(err.name, err.message);
@@ -35,7 +36,7 @@ app.use(express_1.default.urlencoded({ extended: false }));
 app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("<h3>Welcome To Prolego. Your World Of High-Performance Awaits, We’re so glad you’re here! You are now part of a growing community of professionals contributing to the reduction of academic dropout and failure by predicting student's academic performance across the globe via Prolego Whether you’ve come to create something of your own or for your company, we’ve got something for you. Let’s go!.</h3>");
 }));
-authRoutes(app);
+(0, authentication_1.default)(app);
 // Routes
 (0, user_1.default)(app);
 app.all('*', (req, res, next) => {

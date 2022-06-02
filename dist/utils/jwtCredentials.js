@@ -8,3 +8,4 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 exports.secret = process.env.TOKEN_SECRET;
 exports.expiresIn = process.env.JWT_EXPIRES_IN;
+console.log(typeof exports.expiresIn);

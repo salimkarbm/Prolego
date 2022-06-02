@@ -13,23 +13,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = __importDefault(require("../../models/user"));
-const appError_1 = __importDefault(require("../../utils/errors/appError"));
 const users = new user_1.default();
-const getUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const id = Number(req.params.id);
-        const userId = yield users.getUserById(id);
-        if (userId.length === 0)
-            return next(new appError_1.default('user with this email id already exist', 400));
-        const response = {
-            status: 'success',
-            statusCode: 200,
-            response: userId,
-        };
-        return res.status(200).json(response);
-    }
-    catch (error) {
-        return res.status(500).json(error);
-    }
+describe('test', () => {
+    let user;
+    fit('it should have a getUser', () => {
+        expect(users.getUserById).toBeDefined();
+    });
+    fit('getUserById method should return the correct user', () => __awaiter(void 0, void 0, void 0, function* () {
+        const id = 18;
+        const result = yield users.getUserById(id);
+        console.log(result);
+        expect(result).toBeDefined();
+    }));
+    fit('getUserById should return this user', () => __awaiter(void 0, void 0, void 0, function* () {
+        const result = users.getUserById(2);
+        expect(users.getUserById).toBeDefined();
+        expect(result).toBeTruthy();
+    }));
 });
-exports.default = getUserById;
