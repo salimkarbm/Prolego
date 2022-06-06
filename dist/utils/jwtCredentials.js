@@ -3,8 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const user_1 = __importDefault(require("../controllers/user"));
-const userRouters = (app) => {
-    app.patch('/api/v1/users/:id', user_1.default);
-};
-exports.default = userRouters;
+exports.expiresIn = exports.secret = void 0;
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+exports.secret = process.env.TOKEN_SECRET;
+exports.expiresIn = process.env.JWT_EXPIRES_IN;

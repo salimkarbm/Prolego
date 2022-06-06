@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import errorHandler from './utils/errors/errorsHandler';
 import AppError from './utils/errors/appError';
 import userRouters from './api/routes/user';
+import authRoutes from './api/routes/authentication';
 
 process.on('uncaughtException', (err) => {
   console.log(err.name, err.message);
@@ -31,6 +32,7 @@ app.get('/', async (req: Request, res: Response) => {
 });
 // users routes
 userRouters(app);
+authRoutes(app);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`can't find ${req.originalUrl} on server!`, 404));
