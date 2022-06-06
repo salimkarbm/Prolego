@@ -37,7 +37,9 @@ export const create = async (
       status: 'success',
       token,
       data: {
-        newUser,
+        firstname: newUser.firstname,
+        lastname: newUser.lastname,
+        email: newUser.email,
       },
     });
   } catch (err) {
@@ -50,6 +52,11 @@ export const authenticate = async (
   res: Response,
   next: NextFunction
 ) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const err = errors.array();
+    return next(err);
+  }
   const loginUser: LoginUser = {
     password: req.body.password,
     email: req.body.email,
@@ -60,14 +67,15 @@ export const authenticate = async (
       loginUser.password
     );
     if (user === null) {
-      return next(new AppError('incorrect password or email', 400));
+      return next(new AppError('user not found', 400));
     }
     const token = jwt.sign({ userId: user.id }, secret);
     return res.status(200).json({
       status: 'success',
       token,
       data: {
-        user,
+        id: user.id,
+        email: user.email,
       },
     });
   } catch (err) {

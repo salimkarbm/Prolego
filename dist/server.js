@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const errorsHandler_1 = __importDefault(require("./utils/errors/errorsHandler"));
+const errorsHandler_1 = __importDefault(require("./services/errorsHandler"));
 const appError_1 = __importDefault(require("./utils/errors/appError"));
 const authentication_1 = __importDefault(require("./api/routes/authentication"));
 process.on('uncaughtException', (err) => {
