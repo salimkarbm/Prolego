@@ -51,24 +51,24 @@ describe('Test users model', () => {
         });
         expect(user.password).toBeFalsy();
     }));
-    fit('should have a checkEmail method and return email not found if email does not exist', () => __awaiter(void 0, void 0, void 0, function* () {
+    it('should have a checkEmail method and return email not found if email does not exist', () => __awaiter(void 0, void 0, void 0, function* () {
         const result = yield authStore.checkEmail('email not found');
         expect(authStore.checkEmail).toBeDefined();
         expect(result).toBeFalsy();
     }));
-    fit('should have a checkEmail method and return true if email exist', () => __awaiter(void 0, void 0, void 0, function* () {
+    it('should have a checkEmail method and return true if email exist', () => __awaiter(void 0, void 0, void 0, function* () {
         const result = yield authStore.checkEmail('user@example.com');
         expect(authStore.checkEmail).toBeDefined();
         expect(result).toBeTruthy();
     }));
-    fit('authenticate method should validate the user', () => __awaiter(void 0, void 0, void 0, function* () {
+    it('authenticate method should validate the user', () => __awaiter(void 0, void 0, void 0, function* () {
         const result = yield authStore.authenticate('user@example.com', 'pass112');
         expect(result).not.toBeNull();
         if (result) {
             expect(result.email).toEqual('user@example.com');
         }
     }));
-    fit('authenticate method should reject the user', () => __awaiter(void 0, void 0, void 0, function* () {
+    it('authenticate method should reject the user', () => __awaiter(void 0, void 0, void 0, function* () {
         const result = yield authStore.authenticate('userEmail', 'invalidpassword');
         expect(result).toBeNull();
     }));
