@@ -44,7 +44,13 @@ const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
             status: 'success',
             token,
             data: {
+<<<<<<< HEAD
                 newUser,
+=======
+                firstname: newUser.firstname,
+                lastname: newUser.lastname,
+                email: newUser.email,
+>>>>>>> 68094632415fbe490ed364cb984b0f41b7b233b6
             },
         });
     }
@@ -54,6 +60,14 @@ const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.create = create;
 const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+<<<<<<< HEAD
+=======
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        const err = errors.array();
+        return next(err);
+    }
+>>>>>>> 68094632415fbe490ed364cb984b0f41b7b233b6
     const loginUser = {
         password: req.body.password,
         email: req.body.email,
@@ -61,14 +75,23 @@ const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     try {
         const user = yield authStore.authenticate(loginUser.email, loginUser.password);
         if (user === null) {
+<<<<<<< HEAD
             return next(new appError_1.default('incorrect password or email', 400));
+=======
+            return next(new appError_1.default('user not found', 400));
+>>>>>>> 68094632415fbe490ed364cb984b0f41b7b233b6
         }
         const token = jsonwebtoken_1.default.sign({ userId: user.id }, jwtCredentials_1.secret);
         return res.status(200).json({
             status: 'success',
             token,
             data: {
+<<<<<<< HEAD
                 user,
+=======
+                id: user.id,
+                email: user.email,
+>>>>>>> 68094632415fbe490ed364cb984b0f41b7b233b6
             },
         });
     }

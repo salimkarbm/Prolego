@@ -3,23 +3,15 @@ import { User } from '../utils/interface/user';
 import AppError from '../utils/errors/appError';
 
 class UserStore {
-  async updateUser(user: User, id: string): Promise<User[]> {
+  async forgotpassword(id: number, email: string): Promise<User[]> {
     try {
       const conn = await DB.client.connect();
-      const sql = `UPDATE users SET firstname = ($1), lastname = ($2), password_digest = ($3), email = ($4) WHERE id = '${id}' RETURNING *`;
-      const values: (string | undefined)[] = [
-        user.firstname,
-        user.lastname,
-        user.password,
-        user.email
-      ];
-      const result = await conn.query(sql, values);
-      const users = result.rows[0];
-      console.log(result, 'yeah');
+      const sql = `UPADTE password SET email = ($1) WHERE id = ($2) `;
+      const result = await conn.query(sql, [id, email]);
       conn.release();
-      return users;
+      return result.rows;
     } catch (error) {
-      throw new AppError(`could not update user ${user.email}`, 400);
+      throw new AppError(`can not send passwor to this email`, 400);
     }
   }
 }

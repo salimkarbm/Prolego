@@ -6,7 +6,7 @@ export interface User {
   email: string;
   role?: string;
   active?: boolean;
-  token?: string
+  token?: string;
 }
 export interface LoginUser {
   email: string;
