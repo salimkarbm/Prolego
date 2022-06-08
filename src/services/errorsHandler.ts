@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
-import AppError from './appError';
+import AppError from '../utils/errors/appError';
 
 const handleJWTError = () => {
   return new AppError('Invalid token. please log in again ', 401);

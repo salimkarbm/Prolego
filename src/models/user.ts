@@ -1,10 +1,9 @@
-/* eslint-disable import/prefer-default-export */
-
 import { User } from '../utils/interface/user';
 import DB from '../config/database';
+import AppError from '../utils/errors/appError';
 
-export class UserStore {
-  async getUsers(): Promise<User[]> {
+class UserStore {
+  async getAllUsers(): Promise<User[]> {
     try {
       const conn = await DB.client.connect();
       const sql = 'SELECT * FROM users';
@@ -13,7 +12,9 @@ export class UserStore {
       const getuser = result.rows;
       return getuser;
     } catch (error) {
-      throw new Error(`Cannot find User ${error}`);
+      throw new AppError(`Unable find User ${error}`, 400);
     }
   }
 }
+
+export default UserStore;

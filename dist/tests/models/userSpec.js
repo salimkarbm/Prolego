@@ -13,19 +13,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = __importDefault(require("../../models/user"));
-const appError_1 = __importDefault(require("../../utils/errors/appError"));
 const users = new user_1.default();
-const getAllUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const allUser = yield users.getUsers();
-        res.status(200).json({
-            status: 'Success',
-            message: 'User has been found',
-            data: allUser,
-        });
-    }
-    catch (err) {
-        return next(new appError_1.default(`Users not found ${err}`, 404));
-    }
+describe('User model', () => {
+    fit('should have getall method', () => {
+        expect(users.getUsers).toBeDefined();
+    });
+    fit('should return the specific number of users', () => __awaiter(void 0, void 0, void 0, function* () {
+        const result = yield users.getUsers();
+        expect(result.length).toEqual(12);
+    }));
+    fit('should prove users are more than 0', () => __awaiter(void 0, void 0, void 0, function* () {
+        const result = yield users.getUsers();
+        expect(result.length).toBeGreaterThan(0);
+    }));
 });
-exports.default = getAllUser;

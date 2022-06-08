@@ -14,9 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const errorsHandler_1 = __importDefault(require("./utils/errors/errorsHandler"));
+const errorsHandler_1 = __importDefault(require("./services/errorsHandler"));
 const appError_1 = __importDefault(require("./utils/errors/appError"));
 const user_1 = __importDefault(require("./api/routes/user"));
+const authentication_1 = __importDefault(require("./api/routes/authentication"));
 process.on('uncaughtException', (err) => {
     console.log(err.name, err.message);
     console.log('UNCAUGHT EXCEPTION! shutting down...');
@@ -37,6 +38,7 @@ app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 }));
 // users routes
 (0, user_1.default)(app);
+(0, authentication_1.default)(app);
 app.all('*', (req, res, next) => {
     next(new appError_1.default(`can't find ${req.originalUrl} on server!`, 404));
 });
