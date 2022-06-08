@@ -1,16 +1,15 @@
 /* eslint-disable consistent-return */
-import { Request, Response } from 'express';
-import { UserStore } from '../../model/user';
-import User from '../../utils/interface/user';
+import { Request, Response, NextFunction } from 'express';
+import { UserStore } from '../../models/user';
+import { User } from '../../utils/interface/user';
+import AppError from '../../utils/errors/appError';
 
 const users = new UserStore();
 
-const updateUsers = async (req: Request, res: Response) => {
+const updateUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (!req.body.name) {
-      return res.status(404).json({
-        error: 'Fill in the right User',
-      });
+    if (!req.body.email) {
+      return next(new AppError('Email is required', 404));
     }
 
     const user: User = {
@@ -25,8 +24,9 @@ const updateUsers = async (req: Request, res: Response) => {
       message: 'The users has been successfully updated',
       data: updatedUser,
     });
-  } catch (error) {
-    return res.status(404).json(error);
+  } catch (err) {
+    console.log(err);
+    return next(new AppError(`${err}`, 400));
   }
 };
 
