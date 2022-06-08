@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../config/database"));
 const appError_1 = __importDefault(require("../utils/errors/appError"));
 class UserStore {
-    getUsers() {
+    getAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();
@@ -26,7 +26,7 @@ class UserStore {
                 return getuser;
             }
             catch (error) {
-                throw new appError_1.default(`Cannot find User ${error}`, 400);
+                throw new appError_1.default(`Unable find User ${error}`, 400);
             }
         });
     }

@@ -37,7 +37,7 @@ describe('Test users endpoints', () => {
         expect(result.body.status).toEqual('success');
         expect(result.type).toEqual('application/json');
     }));
-    fit('login endpoint should login the users', () => __awaiter(void 0, void 0, void 0, function* () {
+    it('login endpoint should login the users', () => __awaiter(void 0, void 0, void 0, function* () {
         const request = (0, supertest_1.default)(server_1.default);
         const result = yield request
             .post('/api/v1/login')

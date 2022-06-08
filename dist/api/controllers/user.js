@@ -17,7 +17,7 @@ const appError_1 = __importDefault(require("../../utils/errors/appError"));
 const users = new user_1.default();
 const getAllUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const allUser = yield users.getUsers();
+        const allUser = yield users.getAllUsers();
         res.status(200).json({
             status: 'Success',
             message: 'User has been found',

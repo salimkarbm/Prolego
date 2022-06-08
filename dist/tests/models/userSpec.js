@@ -15,15 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = __importDefault(require("../../models/user"));
 const users = new user_1.default();
 describe('User model', () => {
-    fit('should have getall method', () => {
-        expect(users.getUsers).toBeDefined();
+    it('should have getall method', () => {
+        expect(users.getAllUsers).toBeDefined();
     });
-    fit('should return the specific number of users', () => __awaiter(void 0, void 0, void 0, function* () {
-        const result = yield users.getUsers();
+    it('should return the specific number of users', () => __awaiter(void 0, void 0, void 0, function* () {
+        const result = yield users.getAllUsers();
         expect(result.length).toEqual(12);
     }));
-    fit('should prove users are more than 0', () => __awaiter(void 0, void 0, void 0, function* () {
-        const result = yield users.getUsers();
+    it('should prove users are more than 0', () => __awaiter(void 0, void 0, void 0, function* () {
+        const result = yield users.getAllUsers();
         expect(result.length).toBeGreaterThan(0);
+    }));
+    it('should return all users', () => __awaiter(void 0, void 0, void 0, function* () {
+        const data = yield users.getAllUsers();
+        expect(data).toContain(jasmine.objectContaining({}));
     }));
 });

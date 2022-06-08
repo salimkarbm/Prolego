@@ -27,7 +27,7 @@ describe('Test users endpoints', () => {
     expect(result.body.status).toEqual('success');
     expect(result.type).toEqual('application/json');
   });
-  fit('login endpoint should login the users', async () => {
+  it('login endpoint should login the users', async () => {
     const request = supertest(app);
     const result = await request
       .post('/api/v1/login')

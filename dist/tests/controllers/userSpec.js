@@ -16,27 +16,17 @@ const supertest_1 = __importDefault(require("supertest"));
 const server_1 = __importDefault(require("../../server"));
 const request = (0, supertest_1.default)(server_1.default);
 describe('User Routes', () => {
-    let user;
-    let token;
-    fit('should require on GET /users', (done) => {
+    it('should require on GET /api/v1/users', (done) => {
         request.get('/api/v1/users').then((res) => {
             expect(res.status).toBe(200);
             expect(res.body.success).toBeFalsy();
             done();
         });
     });
-    fit('should return all users', () => __awaiter(void 0, void 0, void 0, function* () {
+    it('should return all users', () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield request.get('/api/v1/users');
         console.log(response);
         expect(response.status).toBe(200);
         expect(response.body).toBeTruthy();
-    }));
-    fit('getUser endpoint should return all of the users', () => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield request
-            .get('api/v1/users')
-            .set('Accept', 'application/json');
-        expect(response.body[0].email).toEqual('charles@gmail.com');
-        expect(response.body[0].firstname).toEqual('Charles');
-        expect(response.body[0].lastname).toEqual('Onugha');
     }));
 });
