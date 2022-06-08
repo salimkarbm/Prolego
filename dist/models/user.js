@@ -26,7 +26,7 @@ class UserStore {
                 return user;
             }
             catch (err) {
-                throw new appError_1.default(`Cannot find this User with id: Err ${err}.`, 400);
+                throw new appError_1.default(`Unable to find user with id: Err ${err}.`, 400);
             }
         });
     }

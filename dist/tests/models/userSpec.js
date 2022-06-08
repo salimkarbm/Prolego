@@ -15,19 +15,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = __importDefault(require("../../models/user"));
 const users = new user_1.default();
 describe('test', () => {
-    let user;
-    fit('it should have a getUser', () => {
+    it('it should have a getUser', () => {
         expect(users.getUserById).toBeDefined();
     });
-    fit('getUserById method should return the correct user', () => __awaiter(void 0, void 0, void 0, function* () {
+    it('getUserById should return this user', () => __awaiter(void 0, void 0, void 0, function* () {
+        const result = users.getUserById(2);
+        expect(users.getUserById).toBeDefined();
+        expect(result).toBeTruthy();
+    }));
+    it('getUserById method should return the correct user', () => __awaiter(void 0, void 0, void 0, function* () {
         const id = 18;
         const result = yield users.getUserById(id);
         console.log(result);
         expect(result).toBeDefined();
-    }));
-    fit('getUserById should return this user', () => __awaiter(void 0, void 0, void 0, function* () {
-        const result = users.getUserById(2);
-        expect(users.getUserById).toBeDefined();
-        expect(result).toBeTruthy();
     }));
 });

@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
-import errorHandler from './utils/errors/errorsHandler';
+import errorHandler from './services/errorsHandler';
 import AppError from './utils/errors/appError';
 import authRoutes from './api/routes/authentication';
 import userRoutes from './api/routes/user';

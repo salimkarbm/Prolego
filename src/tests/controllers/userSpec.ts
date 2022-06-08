@@ -2,11 +2,11 @@
 import supertest from 'supertest';
 import app from '../../server';
 import { User } from '../../utils/interface/user';
+import {Request, Response} from "express"
 
 const request = supertest(app);
 
 describe('User Handler', () => {
-  let user: User;
   let originalTimeout: number;
 
   beforeEach(function () {
@@ -18,7 +18,7 @@ describe('User Handler', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
   });
 
-  fit('Request /api/v1/user/${id} to be return 200', (done) => {
+  it('Request /api/v1/user/${id} to be return 200', (done) => {
     request.get('/api/v1/users/17').then((res) => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBeFalsy();
@@ -26,7 +26,7 @@ describe('User Handler', () => {
     });
   });
 
-  fit('Request /api/v1/user/:id should not return an array of a single user', async () => {
+  it('Request /api/v1/user/:id should not return an array of a single user', async () => {
     const response = await supertest(app);
     const result = await response
       .get('/api/v1/user/17')
@@ -36,12 +36,5 @@ describe('User Handler', () => {
     expect(result.type).toEqual('application/json');
   });
 
-  it('show endpoint should return the user', async () => {
-    const response = await request.get('/api/v1/users/:id').send({
-      id: user.id,
-    });
-    expect(response.body.email).toEqual('charles@gmail.com');
-    expect(response.body.firstname).toEqual('Charles');
-    expect(response.body.lastname).toEqual('Onugha');
-  });
+  
 });

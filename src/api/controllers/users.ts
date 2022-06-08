@@ -17,8 +17,8 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
     };
 
     return res.status(200).json(response);
-  } catch (error) {
-    return res.status(500).json(error);
+  } catch (err) {
+    return res.status(500).json(err);
   }
 };
 

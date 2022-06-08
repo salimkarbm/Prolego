@@ -12,7 +12,7 @@ class UserStore {
       const user = result.rows;
       return user;
     } catch (err) {
-      throw new AppError(`Cannot find this User with id: Err ${err}.`, 400);
+      throw new AppError(`Unable to find user with id: Err ${err}.`, 400);
     }
   }
 }

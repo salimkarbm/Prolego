@@ -26,14 +26,14 @@ describe('User Handler', () => {
     afterEach(function () {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
     });
-    fit('Request /api/v1/user/${id} to be return 200', (done) => {
+    it('Request /api/v1/user/${id} to be return 200', (done) => {
         request.get('/api/v1/users/17').then((res) => {
             expect(res.status).toBe(200);
             expect(res.body.success).toBeFalsy();
             done();
         });
     });
-    fit('Request /api/v1/user/:id should not return an array of a single user', () => __awaiter(void 0, void 0, void 0, function* () {
+    it('Request /api/v1/user/:id should not return an array of a single user', () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default);
         const result = yield response
             .get('/api/v1/user/17')

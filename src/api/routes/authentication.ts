@@ -9,45 +9,23 @@ const authRoutes = (app: express.Application) => {
       check('firstname', 'First Name is required')
         .trim()
         .escape()
-        .not()
-        .isEmpty(),
+        .notEmpty()
+        .isString(),
       check('lastname', 'Last Name is required')
         .trim()
         .escape()
-        .not()
-        .isEmpty(),
-      check('email', 'Email is required')
-        .isEmail()
-        .trim()
-        .escape()
-        .normalizeEmail()
-        .not()
-        .isEmpty(),
-      check('password', 'Password is required')
-        .isLength({ min: 5 })
-        .trim()
-        .escape()
-        .not()
-        .isEmpty(),
+        .notEmpty()
+        .isString(),
+      check('email').isEmail().trim().escape().normalizeEmail().notEmpty(),
+      check('password').isLength({ min: 8 }).trim().escape().notEmpty(),
     ],
     create
   );
   app.post(
     '/api/v1/login',
     [
-      check('email', 'Email is required')
-        .isEmail()
-        .trim()
-        .escape()
-        .normalizeEmail()
-        .not()
-        .isEmpty(),
-      check('password', 'Password is required')
-        .isLength({ min: 5 })
-        .trim()
-        .escape()
-        .not()
-        .isEmpty(),
+      check('email').isEmail().trim().escape().normalizeEmail().not().isEmpty(),
+      check('password').isLength({ min: 8 }).trim().escape().notEmpty(),
     ],
     authenticate
   );
