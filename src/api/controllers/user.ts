@@ -8,13 +8,15 @@ const users = new UserStore();
 const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const allUser = await users.getAllUsers();
+    if (allUser.length === 0)
+      return next(new AppError('Unable to return all user', 400));
     res.status(200).json({
       status: 'Success',
       message: 'User has been found',
       data: allUser,
     });
   } catch (err) {
-    return next(new AppError(`Users not found ${err}`, 404));
+    return next(err);
   }
 };
 

@@ -18,6 +18,8 @@ const users = new user_1.default();
 const getAllUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const allUser = yield users.getAllUsers();
+        if (allUser.length === 0)
+            return next(new appError_1.default('Unable to return all user', 400));
         res.status(200).json({
             status: 'Success',
             message: 'User has been found',
@@ -25,7 +27,7 @@ const getAllUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         });
     }
     catch (err) {
-        return next(new appError_1.default(`Users not found ${err}`, 404));
+        return next(err);
     }
 });
 exports.default = getAllUser;
