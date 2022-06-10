@@ -19,12 +19,12 @@ describe('test', () => {
         expect(users.getUserById).toBeDefined();
     });
     it('getUserById should return this user', () => __awaiter(void 0, void 0, void 0, function* () {
-        const result = users.getUserById(2);
+        const result = users.getUserById(1);
         expect(users.getUserById).toBeDefined();
         expect(result).toBeTruthy();
     }));
     it('getUserById method should return the correct user', () => __awaiter(void 0, void 0, void 0, function* () {
-        const id = 18;
+        const id = 1;
         const result = yield users.getUserById(id);
         expect(result).toBeDefined();
     }));
