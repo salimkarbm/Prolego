@@ -48,9 +48,9 @@ app.get('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 app.post('/auth/google', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(req.body.token);
 }));
-(0, authentication_1.default)(app);
 // Routes
 (0, user_1.default)(app);
+(0, authentication_1.default)(app);
 app.all('*', (req, res, next) => {
     next(new appError_1.default(`can't find ${req.originalUrl} on server!`, 404));
 });

@@ -1,6 +1,7 @@
 import express from 'express';
 import { check } from 'express-validator';
 import { create, authenticate } from '../controllers/authentication';
+import verifyUser from '../../middlewares/authentication';
 
 const authRoutes = (app: express.Application) => {
   app.post(
@@ -27,7 +28,8 @@ const authRoutes = (app: express.Application) => {
       check('email').isEmail().trim().escape().normalizeEmail().not().isEmpty(),
       check('password').isLength({ min: 8 }).trim().escape().notEmpty(),
     ],
-    authenticate
+    authenticate,
+    verifyUser
   );
 };
 

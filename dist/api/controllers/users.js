@@ -13,20 +13,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = __importDefault(require("../../models/user"));
-const appError_1 = __importDefault(require("../../utils/errors/appError"));
 const users = new user_1.default();
 const getUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = Number(req.params.id);
-        const userId = yield users.getUserById(id);
-        if (userId.length === 0)
-            return next(new appError_1.default('user with this email id already exist', 400));
-        const response = {
-            status: 'success',
-            statusCode: 200,
-            response: userId,
-        };
-        return res.status(200).json(response);
+        const user = yield users.getUserById(id);
+        return res.status(200).json({
+            data: {
+                id: user.id,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                email: user.email,
+                createAt: user.created_at,
+            },
+        });
     }
     catch (err) {
         return next(err);
