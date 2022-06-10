@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import errorHandler from './services/errorsHandler';
 import AppError from './utils/errors/appError';
 import authRoutes from './api/routes/authentication';
+import userRoutes from './api/routes/user';
 
 process.on('uncaughtException', (err) => {
   console.log(err.name, err.message);
@@ -41,6 +42,9 @@ app.get('/login', async (req: Request, res: Response) => {
 app.post('/auth/google', async (req: Request, res: Response) => {
   console.log(req.body.token);
 });
+
+// Routes
+userRoutes(app);
 authRoutes(app);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {

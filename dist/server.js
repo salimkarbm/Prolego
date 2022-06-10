@@ -18,6 +18,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const errorsHandler_1 = __importDefault(require("./services/errorsHandler"));
 const appError_1 = __importDefault(require("./utils/errors/appError"));
 const authentication_1 = __importDefault(require("./api/routes/authentication"));
+const user_1 = __importDefault(require("./api/routes/user"));
 process.on('uncaughtException', (err) => {
     console.log(err.name, err.message);
     console.log('UNCAUGHT EXCEPTION! shutting down...');
@@ -48,6 +49,8 @@ app.post('/auth/google', (req, res) => __awaiter(void 0, void 0, void 0, functio
     console.log(req.body.token);
 }));
 (0, authentication_1.default)(app);
+// Routes
+(0, user_1.default)(app);
 app.all('*', (req, res, next) => {
     next(new appError_1.default(`can't find ${req.originalUrl} on server!`, 404));
 });
