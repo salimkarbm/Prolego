@@ -12,3 +12,8 @@ export interface LoginUser {
   email: string;
   password: string;
 }
+export interface jwtToken {
+  id: number;
+  iat: number;
+  exp: number;
+}

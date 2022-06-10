@@ -4,7 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const users_1 = __importDefault(require("../controllers/users"));
+const authentication_1 = __importDefault(require("../../middlewares/authentication"));
 const userRoutes = (app) => {
-    app.get('/api/v1/users/:id', users_1.default);
+    app.get('/api/v1/users/:id', authentication_1.default, users_1.default);
 };
 exports.default = userRoutes;

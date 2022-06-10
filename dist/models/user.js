@@ -22,11 +22,11 @@ class UserStore {
                 const conn = yield database_1.default.client.connect();
                 const result = yield conn.query(sql, [id]);
                 conn.release();
-                const user = result.rows;
+                const user = result.rows[0];
                 return user;
             }
             catch (err) {
-                throw new appError_1.default(`Unable to find user with id: Err ${err}.`, 400);
+                throw new appError_1.default(`Unable to find user with id:${id}.`, 400);
             }
         });
     }
