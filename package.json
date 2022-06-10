@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node src/server.js",
     "postinstall": "tsc",
-    "build": "npm run tsc && npm run jasmine",
     "lint": "eslint --ext .ts . --fix",
     "format": "npm run lint && npm run prettier",
     "prettier": "prettier --config .prettierrc --ignore-path .gitignore  --write './src/**/*.+(js|ts)'",
