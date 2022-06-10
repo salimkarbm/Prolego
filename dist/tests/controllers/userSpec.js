@@ -17,7 +17,6 @@ const supertest_1 = __importDefault(require("supertest"));
 const server_1 = __importDefault(require("../../server"));
 const request = (0, supertest_1.default)(server_1.default);
 describe('User Handler', () => {
-    let user;
     let originalTimeout;
     beforeEach(function () {
         originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
@@ -41,13 +40,5 @@ describe('User Handler', () => {
         expect(result.status).toBe(404);
         expect(result.body.status).toEqual('fail');
         expect(result.type).toEqual('application/json');
-    }));
-    it('show endpoint should return the user', () => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield request.get('/api/v1/users/:id').send({
-            id: user.id,
-        });
-        expect(response.body.email).toEqual('charles@gmail.com');
-        expect(response.body.firstname).toEqual('Charles');
-        expect(response.body.lastname).toEqual('Onugha');
     }));
 });

@@ -16,8 +16,6 @@ describe('test', () => {
   it('getUserById method should return the correct user', async () => {
     const id = 18;
     const result = await users.getUserById(id);
-    console.log(result);
     expect(result).toBeDefined();
   });
- 
 });

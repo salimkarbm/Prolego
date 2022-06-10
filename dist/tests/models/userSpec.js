@@ -26,7 +26,6 @@ describe('test', () => {
     it('getUserById method should return the correct user', () => __awaiter(void 0, void 0, void 0, function* () {
         const id = 18;
         const result = yield users.getUserById(id);
-        console.log(result);
         expect(result).toBeDefined();
     }));
 });

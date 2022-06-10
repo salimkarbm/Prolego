@@ -1,8 +1,6 @@
 /* eslint-disable no-template-curly-in-string */
 import supertest from 'supertest';
 import app from '../../server';
-import { User } from '../../utils/interface/user';
-import {Request, Response} from "express"
 
 const request = supertest(app);
 
@@ -35,6 +33,4 @@ describe('User Handler', () => {
     expect(result.body.status).toEqual('fail');
     expect(result.type).toEqual('application/json');
   });
-
-  
 });

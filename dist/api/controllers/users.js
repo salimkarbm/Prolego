@@ -29,7 +29,7 @@ const getUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         return res.status(200).json(response);
     }
     catch (err) {
-        return res.status(500).json(err);
+        return next(err);
     }
 });
 exports.default = getUserById;
