@@ -12,6 +12,9 @@ if (NODE_ENV === 'production') {
     const connectionString = DATABASE_URL;
     client = new pg_1.Pool({
         connectionString,
+        ssl: {
+            rejectUnauthorized: false,
+        },
     });
 }
 else if (NODE_ENV === 'development') {
