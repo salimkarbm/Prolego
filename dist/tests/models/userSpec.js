@@ -18,6 +18,9 @@ describe('User model', () => {
     it('should have getall method', () => {
         expect(users.getAllUsers).toBeDefined();
     });
+    it('it should have a getUser', () => {
+        expect(users.getUserById).toBeDefined();
+    });
     it('should return the specific number of users', () => __awaiter(void 0, void 0, void 0, function* () {
         const result = yield users.getAllUsers();
         expect(result.length).toEqual(12);
@@ -29,5 +32,15 @@ describe('User model', () => {
     it('should return all users', () => __awaiter(void 0, void 0, void 0, function* () {
         const data = yield users.getAllUsers();
         expect(data).toContain(jasmine.objectContaining({}));
+    }));
+    it('getUserById should return this user', () => __awaiter(void 0, void 0, void 0, function* () {
+        const result = users.getUserById(1);
+        expect(users.getUserById).toBeDefined();
+        expect(result).toBeTruthy();
+    }));
+    it('getUserById method should return the correct user', () => __awaiter(void 0, void 0, void 0, function* () {
+        const id = 1;
+        const result = yield users.getUserById(id);
+        expect(result).toBeDefined();
     }));
 });

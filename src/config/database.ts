@@ -5,45 +5,50 @@ dotenv.config();
 
 const {
   NODE_ENV,
-  POSTGRES_DB,
-  POSTGRES_USER,
-  POSTGRES_HOST,
-  POSTGRES_PORT,
+  Database,
+  User,
+  Host,
+  Port,
   POSTGRES_TEST_DB,
-  POSTGRES_PASSWORD,
+  Password,
+  DATABASE_URL,
 } = process.env;
 
 let client: Pool;
 
-if (NODE_ENV === 'development') {
-  console.log('dev');
+if (NODE_ENV === 'production') {
+  const connectionString = DATABASE_URL;
   client = new Pool({
-    host: POSTGRES_HOST,
-    user: POSTGRES_USER,
-    database: POSTGRES_DB,
-    password: POSTGRES_PASSWORD,
-    port: parseInt(POSTGRES_PORT as string, 10),
+    connectionString,
+    ssl: {
+      rejectUnauthorized: false,
+    },
   });
-} else if (NODE_ENV === 'test') {
-  console.log('test');
+} else if (NODE_ENV === 'development') {
   client = new Pool({
-    host: POSTGRES_HOST,
-    user: POSTGRES_USER,
-    database: POSTGRES_TEST_DB,
-    password: POSTGRES_PASSWORD,
-    port: parseInt(POSTGRES_PORT as string, 10),
+    host: Host,
+    user: User,
+    database: Database,
+    password: Password,
+    port: parseInt(Port as string, 10),
   });
 } else {
-  client = new Pool({});
+  client = new Pool({
+    host: Host,
+    user: User,
+    database: POSTGRES_TEST_DB,
+    password: Password,
+    port: parseInt(Port as string, 10),
+  });
 }
 
 // Listen for server connections
 export default {
   client,
-  POSTGRES_DB,
-  POSTGRES_USER,
-  POSTGRES_HOST,
-  POSTGRES_PORT,
+  Database,
+  User,
+  Host,
+  Port,
   POSTGRES_TEST_DB,
-  POSTGRES_PASSWORD,
+  Password,
 };

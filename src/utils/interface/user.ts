@@ -6,8 +6,14 @@ export interface User {
   email: string;
   role?: string;
   active?: boolean;
+  created_at?: string;
 }
 export interface LoginUser {
   email: string;
   password: string;
+}
+export interface jwtToken {
+  id: number;
+  iat: number;
+  exp: number;
 }

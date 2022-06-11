@@ -12,5 +12,9 @@
     "database": "prolego_test",
     "user": "admin",
     "password": "adminpassword"
+  },
+  "production":{
+    "driver": "pg",
+    "native":"true"
   }
 }

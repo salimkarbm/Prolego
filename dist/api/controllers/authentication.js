@@ -14,10 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authenticate = exports.create = void 0;
 const express_validator_1 = require("express-validator");
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const jwtCredentials_1 = require("../../utils/jwtCredentials");
 const appError_1 = __importDefault(require("../../utils/errors/appError"));
 const authentication_1 = __importDefault(require("../../services/authentication"));
+const httpsCookie_1 = __importDefault(require("../../utils/httpsCookie"));
 const authStore = new authentication_1.default();
 const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
@@ -37,18 +36,7 @@ const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
             return next(new appError_1.default('user with this email already exist', 400));
         }
         const newUser = yield authStore.create(user);
-        const token = jsonwebtoken_1.default.sign({ userId: newUser.id }, jwtCredentials_1.secret, {
-            expiresIn: jwtCredentials_1.expiresIn,
-        });
-        return res.status(201).json({
-            status: 'success',
-            token,
-            data: {
-                firstname: newUser.firstname,
-                lastname: newUser.lastname,
-                email: newUser.email,
-            },
-        });
+        (0, httpsCookie_1.default)(newUser, 201, req, res);
     }
     catch (err) {
         return next(err);
@@ -56,11 +44,6 @@ const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.create = create;
 const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const errors = (0, express_validator_1.validationResult)(req);
-    if (!errors.isEmpty()) {
-        const err = errors.array();
-        return next(err);
-    }
     const loginUser = {
         password: req.body.password,
         email: req.body.email,
@@ -68,17 +51,9 @@ const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     try {
         const user = yield authStore.authenticate(loginUser.email, loginUser.password);
         if (user === null) {
-            return next(new appError_1.default('user not found', 400));
+            return next(new appError_1.default('incorrect password or email', 400));
         }
-        const token = jsonwebtoken_1.default.sign({ userId: user.id }, jwtCredentials_1.secret);
-        return res.status(200).json({
-            status: 'success',
-            token,
-            data: {
-                id: user.id,
-                email: user.email,
-            },
-        });
+        (0, httpsCookie_1.default)(user, 200, req, res);
     }
     catch (err) {
         return next(err);

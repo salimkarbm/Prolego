@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import jwt from 'jsonwebtoken';
 import { User, LoginUser } from '../../utils/interface/user';
-import { expiresIn, secret } from '../../utils/jwtCredentials';
 import AppError from '../../utils/errors/appError';
 import AuthService from '../../services/authentication';
+import createSendToken from '../../utils/httpsCookie';
 
 const authStore = new AuthService();
 
@@ -30,18 +29,7 @@ export const create = async (
       return next(new AppError('user with this email already exist', 400));
     }
     const newUser = await authStore.create(user);
-    const token = jwt.sign({ userId: newUser.id }, secret, {
-      expiresIn,
-    });
-    return res.status(201).json({
-      status: 'success',
-      token,
-      data: {
-        firstname: newUser.firstname,
-        lastname: newUser.lastname,
-        email: newUser.email,
-      },
-    });
+    createSendToken(newUser, 201, req, res);
   } catch (err) {
     return next(err);
   }
@@ -52,11 +40,6 @@ export const authenticate = async (
   res: Response,
   next: NextFunction
 ) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const err = errors.array();
-    return next(err);
-  }
   const loginUser: LoginUser = {
     password: req.body.password,
     email: req.body.email,
@@ -67,17 +50,9 @@ export const authenticate = async (
       loginUser.password
     );
     if (user === null) {
-      return next(new AppError('user not found', 400));
+      return next(new AppError('incorrect password or email', 400));
     }
-    const token = jwt.sign({ userId: user.id }, secret);
-    return res.status(200).json({
-      status: 'success',
-      token,
-      data: {
-        id: user.id,
-        email: user.email,
-      },
-    });
+    createSendToken(user, 200, req, res);
   } catch (err) {
     return next(err);
   }
