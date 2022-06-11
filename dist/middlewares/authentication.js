@@ -36,7 +36,6 @@ const verifyAuthToken = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
                 .json({ message: 'The user belonging to this token no longer exist' });
         }
         req.user = currentUser;
-        console.log(req.user);
         next();
     }
     catch (error) {

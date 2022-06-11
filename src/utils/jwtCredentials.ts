@@ -9,6 +9,7 @@ export const jwtCookiesExpiresIn = parseInt(
   process.env.JWT_COOKIES_EXPIRES_IN as string,
   10
 );
+
 export const signToken = (id: number) => {
   return jwt.sign({ id }, secret, {
     expiresIn,
