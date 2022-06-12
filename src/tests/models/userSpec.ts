@@ -13,7 +13,7 @@ describe('test', () => {
     expect(store.getUserById).toBeDefined();
     expect(result).toBeTruthy();
   });
-  fit('should have a index method', async () => {
+  it('should have a index method', async () => {
     const result = await store.index();
     expect(store.index).toBeDefined();
     expect(result).toBeInstanceOf(Array);
