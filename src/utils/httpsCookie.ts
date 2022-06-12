@@ -12,13 +12,11 @@ const createSendToken = (
   const id = Number(user.id);
   if (id) {
     const token = signToken(id);
-    const cookieOptions = {
+    res.cookie('jwt', token, {
       expires: new Date(Date.now() + jwtCookiesExpiresIn * 60 * 60 * 1000),
       httpOnly: true,
       secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-    };
-    if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
-    res.cookie('jwt', token, cookieOptions);
+    });
 
     res.status(statusCode).json({
       status: 'success',

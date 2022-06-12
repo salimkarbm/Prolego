@@ -40,13 +40,13 @@ app.use((0, compression_1.default)());
 // Define index route
 app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // res.render('index');
-    res.send("<h3>Welcome To Prolego. Your World Of High-Performance Awaits, We’re so glad you’re here! You are now part of a growing community of professionals contributing to the reduction of academic dropout and failure by predicting student's academic performance across the globe via Prolego Whether you’ve come to create something of your own or for your company, we’ve got something for you. Let’s go!.</h3>");
+    res.send("<h3><center>Welcome To Prolego. Your World Of High-Performance Awaits, We’re so glad you’re here! You are now part of a growing community of professionals contributing to the reduction of academic dropout and failure by predicting student's academic performance across the globe via Prolego Whether you’ve come to create something of your own or for your company, we’ve got something for you. Let’s go!.</center></h3>");
 }));
-// app.get('/login', async (req: Request, res: Response) => {
-//   res.render('login');
-// });
+app.get('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.render('login');
+}));
 app.post('/auth/google', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.body.token);
+    console.log(req.query.params);
 }));
 // Routes
 (0, user_1.default)(app);
