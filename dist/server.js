@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const compression_1 = __importDefault(require("compression"));
+const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const errorsHandler_1 = __importDefault(require("./services/errorsHandler"));
 const appError_1 = __importDefault(require("./utils/errors/appError"));
@@ -28,12 +29,17 @@ process.on('uncaughtException', (err) => {
 dotenv_1.default.config();
 // Initialize express
 const app = (0, express_1.default)();
+// enable proxy
 app.enable('trust proxy');
 // Port
 const address = '0.0.0.0:8000';
 const PORT = process.env.PORT || 8000;
 // compression middleware
 app.use((0, compression_1.default)());
+// implement cors
+// use cors middleware
+app.use((0, cors_1.default)());
+// add your routes
 app.set('view engine', 'ejs');
 // Body parser middleware
 app.use(express_1.default.json());

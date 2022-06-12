@@ -30,5 +30,19 @@ class UserStore {
             }
         });
     }
+    index() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const conn = yield database_1.default.client.connect();
+                const sql = 'SELECT * FROM users';
+                const result = yield conn.query(sql);
+                conn.release();
+                return result.rows;
+            }
+            catch (err) {
+                throw new appError_1.default(`unable to fetch users from database`, 400);
+            }
+        });
+    }
 }
 exports.default = UserStore;
