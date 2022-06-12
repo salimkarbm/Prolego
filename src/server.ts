@@ -30,9 +30,10 @@ const PORT = process.env.PORT || 8000;
 app.use(compression());
 
 // implement cors
+// use cors middleware
 app.use(cors());
-app.options('*', cors());
 
+// add your routes
 app.set('view engine', 'ejs');
 
 // Body parser middleware
