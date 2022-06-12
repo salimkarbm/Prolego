@@ -1,8 +1,8 @@
 /* eslint-disable no-template-curly-in-string */
 import supertest from 'supertest';
-import app from '../../server';
+import server from '../../server';
 
-const request = supertest(app);
+const request = supertest(server);
 
 describe('User Handler', () => {
   let originalTimeout: number;
@@ -16,16 +16,16 @@ describe('User Handler', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
   });
 
-  it('Request /api/v1/user/${id} to be return 200', (done) => {
-    request.get('/api/v1/users/17').then((res) => {
+  it('Request /api/v1/user/${id} to  return a single user', (done) => {
+    request.get('/api/v1/users/1').then((res) => {
       expect(res.status).toBe(200);
-      expect(res.body.success).toBeFalsy();
+      expect(res.body.status).toEqual('success');
       done();
     });
   });
 
-  it('Request /api/v1/user/:id should not return an array of a single user', async () => {
-    const response = await supertest(app);
+  it('Request /api/v1/user/:id should not return false', async () => {
+    const response = await supertest(server);
     const result = await response
       .get('/api/v1/user/17')
       .set('Accept', 'application/json');

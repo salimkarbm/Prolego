@@ -60,10 +60,19 @@ app.all('*', (req: Request, res: Response, next: NextFunction) => {
 app.use(errorHandler);
 
 // Listen for server connections
-app.listen(PORT, () => console.log(`server running on ${address}`));
+const server = app.listen(PORT, () =>
+  console.log(`server running on ${address}`)
+);
 
 process.on('unhandledRejection', (err: any) => {
   throw err;
 });
 
-export default app;
+process.on('SIGTERM', () => {
+  console.log('SIGTERM RECEIVED. shutting down gracefully');
+  server.close(() => {
+    console.log('process terminated!');
+  });
+});
+
+export default server;

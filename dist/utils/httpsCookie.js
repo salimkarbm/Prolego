@@ -5,14 +5,11 @@ const createSendToken = (user, statusCode, req, res) => {
     const id = Number(user.id);
     if (id) {
         const token = (0, jwtCredentials_1.signToken)(id);
-        const cookieOptions = {
+        res.cookie('jwt', token, {
             expires: new Date(Date.now() + jwtCredentials_1.jwtCookiesExpiresIn * 60 * 60 * 1000),
             httpOnly: true,
             secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-        };
-        if (process.env.NODE_ENV === 'production')
-            cookieOptions.secure = true;
-        res.cookie('jwt', token, cookieOptions);
+        });
         res.status(statusCode).json({
             status: 'success',
             token,
