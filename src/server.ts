@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import compression from 'compression';
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import errorHandler from './services/errorsHandler';
 import AppError from './utils/errors/appError';
@@ -18,6 +19,7 @@ dotenv.config();
 // Initialize express
 const app: express.Application = express();
 
+// enable proxy
 app.enable('trust proxy');
 
 // Port
@@ -26,6 +28,10 @@ const PORT = process.env.PORT || 8000;
 
 // compression middleware
 app.use(compression());
+
+// implement cors
+app.use(cors());
+app.options('*', cors());
 
 app.set('view engine', 'ejs');
 
