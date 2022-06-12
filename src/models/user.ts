@@ -15,6 +15,18 @@ class UserStore {
       throw new AppError(`Unable to find user with id:${id}.`, 400);
     }
   }
+
+  async index(): Promise<User[]> {
+    try {
+      const conn = await DB.client.connect();
+      const sql = 'SELECT * FROM users';
+      const result = await conn.query(sql);
+      conn.release();
+      return result.rows;
+    } catch (err) {
+      throw new AppError(`unable to fetch users from database`, 400);
+    }
+  }
 }
 
 export default UserStore;

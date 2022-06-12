@@ -1,16 +1,21 @@
 import UserStore from '../../models/user';
 
-const users = new UserStore();
+const store = new UserStore();
 
 describe('test', () => {
   it('it should have a getUserById method', () => {
-    expect(users.getUserById).toBeDefined();
+    expect(store.getUserById).toBeDefined();
   });
 
   it('getUserById  method should return a user', async () => {
     const id = 1;
-    const result = await users.getUserById(id);
-    expect(users.getUserById).toBeDefined();
+    const result = await store.getUserById(id);
+    expect(store.getUserById).toBeDefined();
     expect(result).toBeTruthy();
+  });
+  it('should have a index method', async () => {
+    const result = await store.index();
+    expect(store.index).toBeDefined();
+    expect(result).toBeInstanceOf(Array);
   });
 });

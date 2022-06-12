@@ -13,19 +13,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = __importDefault(require("../../models/user"));
-const users = new user_1.default();
+const store = new user_1.default();
 describe('test', () => {
-    it('it should have a getUser', () => {
-        expect(users.getUserById).toBeDefined();
+    it('it should have a getUserById method', () => {
+        expect(store.getUserById).toBeDefined();
     });
-    it('getUserById should return this user', () => __awaiter(void 0, void 0, void 0, function* () {
-        const result = users.getUserById(1);
-        expect(users.getUserById).toBeDefined();
+    it('getUserById  method should return a user', () => __awaiter(void 0, void 0, void 0, function* () {
+        const id = 1;
+        const result = yield store.getUserById(id);
+        expect(store.getUserById).toBeDefined();
         expect(result).toBeTruthy();
     }));
-    it('getUserById method should return the correct user', () => __awaiter(void 0, void 0, void 0, function* () {
-        const id = 1;
-        const result = yield users.getUserById(id);
-        expect(result).toBeDefined();
+    fit('should have a index method', () => __awaiter(void 0, void 0, void 0, function* () {
+        const result = yield store.index();
+        console.log(result);
+        expect(store.index).toBeDefined();
+        expect(result).toBeInstanceOf(Array);
     }));
 });
