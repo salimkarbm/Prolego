@@ -31,7 +31,14 @@ app.use(compression());
 
 // implement cors
 // use cors middleware
-app.use(cors());
+const allowedOrigins = ['http://localhost:3000'];
+
+const options: cors.CorsOptions = {
+  origin: allowedOrigins,
+};
+
+// Then pass these options to cors:
+app.use(cors(options));
 
 // add your routes
 app.set('view engine', 'ejs');
