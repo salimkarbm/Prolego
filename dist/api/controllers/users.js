@@ -50,6 +50,7 @@ const getAllUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         });
     }
     catch (err) {
+        console.log(err);
         return next(err);
     }
 });

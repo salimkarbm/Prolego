@@ -36,7 +36,7 @@ if (NODE_ENV === 'production') {
   client = new Pool({
     host: Host,
     user: User,
-    database: POSTGRES_TEST_DB,
+    database: Database,
     password: Password,
     port: parseInt(Port as string, 10),
   });

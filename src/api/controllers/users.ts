@@ -44,6 +44,7 @@ export const getAllUser = async (
       data: allUser,
     });
   } catch (err) {
+    console.log(err);
     return next(err);
   }
 };

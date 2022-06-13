@@ -2,17 +2,18 @@ import DB from '../config/database';
 import { User } from '../utils/interface/user';
 import AppError from '../utils/errors/appError';
 
+console.log(DB.client.connect());
 class UserStore {
   async getAllUsers(): Promise<User[]> {
     try {
       const sql = 'SELECT * FROM users';
       const conn = await DB.client.connect();
       const result = await conn.query(sql);
-      conn.release();
       const getuser = result.rows;
+      conn.release();
       return getuser;
-    } catch (error) {
-      throw new AppError(`Unable find User ${error}`, 400);
+    } catch (err) {
+      throw new AppError(`Unable find User ${err}`, 400);
     }
   }
 

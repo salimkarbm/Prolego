@@ -30,7 +30,7 @@ else {
     client = new pg_1.Pool({
         host: Host,
         user: User,
-        database: POSTGRES_TEST_DB,
+        database: Database,
         password: Password,
         port: parseInt(Port, 10),
     });
