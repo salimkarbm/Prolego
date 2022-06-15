@@ -1,5 +1,8 @@
 "use strict";
+<<<<<<< HEAD
 /* eslint-disable import/prefer-default-export */
+=======
+>>>>>>> 0eb42c9a7c8bf01e1bba74d41c3b8bc0bb8919e0
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -16,6 +19,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserStore = void 0;
 const database_1 = __importDefault(require("../config/database"));
 class UserStore {
+<<<<<<< HEAD
     getUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -28,6 +32,20 @@ class UserStore {
             }
             catch (error) {
                 throw new Error(`Cannot find User ${error}`);
+=======
+    getUserById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const sql = 'SELECT * FROM users WHERE id =($1)';
+                const conn = yield database_1.default.client.connect();
+                const result = yield conn.query(sql, [id]);
+                conn.release();
+                const user = result.rows;
+                return user;
+            }
+            catch (error) {
+                throw new Error(`Cannot find this User with id: ${id}, Error ${error}.`);
+>>>>>>> 0eb42c9a7c8bf01e1bba74d41c3b8bc0bb8919e0
             }
         });
     }

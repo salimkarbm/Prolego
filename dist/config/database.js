@@ -6,38 +6,42 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 const pg_1 = require("pg");
 dotenv_1.default.config();
-const { NODE_ENV, POSTGRES_DB, POSTGRES_USER, POSTGRES_HOST, POSTGRES_PORT, POSTGRES_TEST_DB, POSTGRES_PASSWORD, } = process.env;
+const { NODE_ENV, Database, User, Host, DATABASE_PORT, POSTGRES_TEST_DB, Password, DATABASE_URL, } = process.env;
 let client;
-if (NODE_ENV === 'development') {
-    console.log('dev');
+if (NODE_ENV === 'production') {
+    const connectionString = DATABASE_URL;
     client = new pg_1.Pool({
-        host: POSTGRES_HOST,
-        user: POSTGRES_USER,
-        database: POSTGRES_DB,
-        password: POSTGRES_PASSWORD,
-        port: parseInt(POSTGRES_PORT, 10),
+        connectionString,
+        ssl: {
+            rejectUnauthorized: false,
+        },
     });
 }
-else if (NODE_ENV === 'test') {
-    console.log('test');
+else if (NODE_ENV === 'development') {
     client = new pg_1.Pool({
-        host: POSTGRES_HOST,
-        user: POSTGRES_USER,
-        database: POSTGRES_TEST_DB,
-        password: POSTGRES_PASSWORD,
-        port: parseInt(POSTGRES_PORT, 10),
+        host: Host,
+        user: User,
+        database: Database,
+        password: Password,
+        port: parseInt(DATABASE_PORT, 10),
     });
 }
 else {
-    client = new pg_1.Pool({});
+    client = new pg_1.Pool({
+        host: Host,
+        user: User,
+        database: POSTGRES_TEST_DB,
+        password: Password,
+        port: parseInt(DATABASE_PORT, 10),
+    });
 }
 // Listen for server connections
 exports.default = {
     client,
-    POSTGRES_DB,
-    POSTGRES_USER,
-    POSTGRES_HOST,
-    POSTGRES_PORT,
+    Database,
+    User,
+    Host,
+    DATABASE_PORT,
     POSTGRES_TEST_DB,
-    POSTGRES_PASSWORD,
+    Password,
 };

@@ -1,5 +1,5 @@
 import supertest from 'supertest';
-import app from '../../server';
+import server from '../../server';
 
 describe('Test users endpoints', () => {
   let originalTimeout: number;
@@ -14,7 +14,7 @@ describe('Test users endpoints', () => {
   });
 
   it('create endpoint should create a user', async () => {
-    const request = supertest(app);
+    const request = supertest(server);
     const result = await request
       .post('/api/v1/signup')
       .set('Accept', 'application/json')
@@ -28,7 +28,7 @@ describe('Test users endpoints', () => {
     expect(result.type).toEqual('application/json');
   });
   it('login endpoint should login the users', async () => {
-    const request = supertest(app);
+    const request = supertest(server);
     const result = await request
       .post('/api/v1/login')
       .set('Accept', 'application/json')
