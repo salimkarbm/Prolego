@@ -1,5 +1,5 @@
 import DB from '../config/database';
-import { User } from '../utils/interface/user';
+import { User, GoogleUser } from '../utils/interface/user';
 import AppError from '../utils/errors/appError';
 
 class UserStore {
@@ -12,11 +12,24 @@ class UserStore {
       const user = result.rows[0];
       return user;
     } catch (err) {
-      throw new AppError(`Unable to find user with id:${id}.`, 400);
+      throw new AppError(`Unable to find user with id:${id}.`, 500);
     }
   }
 
-  async index(): Promise<User[]> {
+  async getUserByEmail(email: string): Promise<User> {
+    try {
+      const sql = 'SELECT * FROM users WHERE email=($1)';
+      const conn = await DB.client.connect();
+      const result = await conn.query(sql, [email]);
+      conn.release();
+      const user = result.rows[0];
+      return user;
+    } catch (err) {
+      throw new AppError(`Unable to find user with Email:${email}.`, 500);
+    }
+  }
+
+  async index(): Promise<GoogleUser[]> {
     try {
       const conn = await DB.client.connect();
       const sql = 'SELECT * FROM users';
@@ -24,7 +37,7 @@ class UserStore {
       conn.release();
       return result.rows;
     } catch (err) {
-      throw new AppError(`unable to fetch users from database`, 400);
+      throw new AppError(`unable to fetch users from database`, 500);
     }
   }
 }

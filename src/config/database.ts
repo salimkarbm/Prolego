@@ -30,7 +30,7 @@ if (NODE_ENV === 'production') {
     user: User,
     database: Database,
     password: Password,
-    port: parseInt(Port as string, 10),
+    // port: parseInt(Port as string, 10),
   });
 } else {
   client = new Pool({

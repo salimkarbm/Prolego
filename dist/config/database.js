@@ -23,7 +23,7 @@ else if (NODE_ENV === 'development') {
         user: User,
         database: Database,
         password: Password,
-        port: parseInt(Port, 10),
+        // port: parseInt(Port as string, 10),
     });
 }
 else {

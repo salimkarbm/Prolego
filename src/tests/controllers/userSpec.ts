@@ -1,4 +1,3 @@
-/* eslint-disable no-template-curly-in-string */
 import supertest from 'supertest';
 import server from '../../server';
 
@@ -15,7 +14,7 @@ describe('User Handler', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
   });
 
-  it('Request /api/v1/user/${id} to return a single user', (done) => {
+  it('Request /api/v1/user/:id to return a single user', (done) => {
     request.get('/api/v1/users/1').then((res) => {
       expect(res.status).toBe(200);
       expect(res.body.status).toEqual('success');

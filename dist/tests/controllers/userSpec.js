@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/* eslint-disable no-template-curly-in-string */
 const supertest_1 = __importDefault(require("supertest"));
 const server_1 = __importDefault(require("../../server"));
 describe('User Handler', () => {
@@ -25,7 +24,7 @@ describe('User Handler', () => {
     afterEach(function () {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
     });
-    it('Request /api/v1/user/${id} to return a single user', (done) => {
+    it('Request /api/v1/user/:id to return a single user', (done) => {
         request.get('/api/v1/users/1').then((res) => {
             expect(res.status).toBe(200);
             expect(res.body.status).toEqual('success');
@@ -41,7 +40,7 @@ describe('User Handler', () => {
         expect(result.body.status).toEqual('fail');
         expect(result.type).toEqual('application/json');
     }));
-    fit('index endpoint should return all of the users', () => __awaiter(void 0, void 0, void 0, function* () {
+    it('index endpoint should return all of the users', () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield request
             .get('/api/v1/users')
             .set('Accept', 'application/json');

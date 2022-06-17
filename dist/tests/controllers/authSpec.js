@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const supertest_1 = __importDefault(require("supertest"));
 const server_1 = __importDefault(require("../../server"));
 describe('Test users endpoints', () => {
+    let token;
     let originalTimeout;
     beforeEach(function () {
         originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
@@ -23,7 +24,7 @@ describe('Test users endpoints', () => {
     afterEach(function () {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
     });
-    it('create endpoint should create a user', () => __awaiter(void 0, void 0, void 0, function* () {
+    it('/api/v1/signup endpoint should create a user', () => __awaiter(void 0, void 0, void 0, function* () {
         const request = (0, supertest_1.default)(server_1.default);
         const result = yield request
             .post('/api/v1/signup')
@@ -37,7 +38,7 @@ describe('Test users endpoints', () => {
         expect(result.body.status).toEqual('success');
         expect(result.type).toEqual('application/json');
     }));
-    it('login endpoint should login the users', () => __awaiter(void 0, void 0, void 0, function* () {
+    it('/api/v1/login endpoint should login the users', () => __awaiter(void 0, void 0, void 0, function* () {
         const request = (0, supertest_1.default)(server_1.default);
         const result = yield request
             .post('/api/v1/login')
@@ -49,5 +50,32 @@ describe('Test users endpoints', () => {
         expect(result.body.status).toEqual('success');
         expect(result.type).toEqual('application/json');
         expect(result.body.token).toBeInstanceOf(String);
+    }));
+    it('/api/v1/users-email endpoint should get users by email', () => __awaiter(void 0, void 0, void 0, function* () {
+        const request = (0, supertest_1.default)(server_1.default);
+        const result = yield request
+            .get('/api/v1/users-email')
+            .set('Accept', 'application/json')
+            .send({
+            email: 'user@example.com',
+        });
+        expect(result.body.status).toEqual('success');
+        expect(result.status).toEqual(200);
+        expect(result.type).toEqual('application/json');
+        expect(result.body.data.email).toEqual('user@example.com');
+    }));
+    fit('/api/v1/users-email endpoint should authenticate google users login', () => __awaiter(void 0, void 0, void 0, function* () {
+        const request = (0, supertest_1.default)(server_1.default);
+        const result = yield request
+            .post('/api/v1/auth/google')
+            .set('Accept', 'application/json')
+            .send({
+            credential: token,
+        });
+        console.log(result);
+        // expect(result.body.status).toEqual('success');
+        // expect(result.status).toEqual(200);
+        // expect(result.type).toEqual('application/json');
+        // expect(result.body.data.email).toEqual('user@example.com');
     }));
 });

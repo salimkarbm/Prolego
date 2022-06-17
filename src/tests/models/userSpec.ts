@@ -18,4 +18,9 @@ describe('test', () => {
     expect(store.index).toBeDefined();
     expect(result).toBeInstanceOf(Array);
   });
+  it('should have a getUserbyEmail method', async () => {
+    const result = await store.getUserByEmail('user@example.com');
+    expect(result.email).toEqual('user@example.com');
+    expect(store.getUserByEmail).toBeDefined();
+  });
 });

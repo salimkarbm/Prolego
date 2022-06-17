@@ -16,7 +16,6 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const compression_1 = __importDefault(require("compression"));
 const cors_1 = __importDefault(require("cors"));
-const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const errorsHandler_1 = __importDefault(require("./services/errorsHandler"));
 const appError_1 = __importDefault(require("./utils/errors/appError"));
 const authentication_1 = __importDefault(require("./api/routes/authentication"));
@@ -44,17 +43,12 @@ app.set('view engine', 'ejs');
 // Body parser middleware
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
-app.use((0, cookie_parser_1.default)());
 // Define index route
 app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // res.render('index');
     res.send("<h3 style=background:black;padding:6em;color:white><center>Welcome To Prolego. Your World Of High-Performance Awaits, We’re so glad you’re here! You are now part of a growing community of professionals contributing to the reduction of academic dropout and failure by predicting student's academic performance across the globe via Prolego Whether you’ve come to create something of your own or for your company, we’ve got something for you. Let’s go!.</center></h3>");
 }));
 app.get('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.render('login');
-}));
-app.post('/auth/google', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.query.params);
 }));
 // Routes
 (0, user_1.default)(app);

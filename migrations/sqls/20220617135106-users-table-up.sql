@@ -8,4 +8,7 @@ CREATE TABLE users (
   roles VARCHAR (100) CHECK (roles IN ('Admin', 'Teacher', 'Student', 'User' )) Default 'User'  NOT NULL,
   active Boolean NOT NULL default 'true',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP);
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  google_id VARCHAR (100),
+  passwordResetToken VARCHAR (150));
+  
