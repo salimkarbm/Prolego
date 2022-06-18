@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import DB from '../config/database';
-import { User } from '../utils/interface/user';
+import { User, GoogleUser } from '../utils/interface/user';
 import AppError from '../utils/errors/appError';
 import { pepper, saltRound } from '../utils/bcryptCredentials';
 
@@ -58,6 +58,34 @@ class AuthService {
       return !!result.rows[0];
     } catch (err) {
       throw new AppError(`Something went wrong,`, 400);
+    }
+  }
+
+  async upsertGoogleUser(user: GoogleUser): Promise<User> {
+    const newUser = {
+      firstName: user.firstname,
+      lastName: user.lastname,
+      password: user.password,
+      email: user.email,
+      googleId: user.google_id,
+    };
+    try {
+      const conn = await DB.client.connect();
+      const sql =
+        'INSERT INTO users (firstname, lastname, password_digest, email, google_id) VALUES($1, $2, $3, $4,$5) RETURNING * ';
+      const hash = await bcrypt.hash(newUser.password + pepper, saltRound);
+
+      const result = await conn.query(sql, [
+        newUser.firstName,
+        newUser.lastName,
+        hash,
+        newUser.email,
+        newUser.googleId,
+      ]);
+      conn.release();
+      return result.rows[0];
+    } catch (err) {
+      throw new AppError(`Unable to upsert user ${newUser.firstName},`, 400);
     }
   }
 }

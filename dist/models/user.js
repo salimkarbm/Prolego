@@ -26,7 +26,22 @@ class UserStore {
                 return user;
             }
             catch (err) {
-                throw new appError_1.default(`Unable to find user with id:${id}.`, 400);
+                throw new appError_1.default(`Unable to find user with id:${id}.`, 500);
+            }
+        });
+    }
+    getUserByEmail(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const sql = 'SELECT * FROM users WHERE email=($1)';
+                const conn = yield database_1.default.client.connect();
+                const result = yield conn.query(sql, [email]);
+                conn.release();
+                const user = result.rows[0];
+                return user;
+            }
+            catch (err) {
+                throw new appError_1.default(`Unable to find user with Email:${email}.`, 500);
             }
         });
     }
@@ -40,7 +55,7 @@ class UserStore {
                 return result.rows;
             }
             catch (err) {
-                throw new appError_1.default(`unable to fetch users from database`, 400);
+                throw new appError_1.default(`unable to fetch users from database`, 500);
             }
         });
     }

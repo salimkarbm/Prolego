@@ -17,3 +17,7 @@ export interface jwtToken {
   iat: number;
   exp: number;
 }
+
+export interface GoogleUser extends User {
+  google_id: string;
+}

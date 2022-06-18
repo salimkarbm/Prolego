@@ -22,7 +22,33 @@ export const getUserById = async (
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
-        createAt: user.created_at,
+        createdAt: user.created_at,
+      },
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const getUserByEmail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const email = req.body.email as string;
+    const user = await store.getUserByEmail(email);
+    if (!user) {
+      return next(new AppError('user not found', 400));
+    }
+    return res.status(200).json({
+      status: 'success',
+      data: {
+        id: user.id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        createdAt: user.created_at,
       },
     });
   } catch (err) {
@@ -42,6 +68,7 @@ export const index = async (req: Request, res: Response) => {
         firstName: el.firstname,
         lastname: el.lastname,
         email: el.email,
+        googleId: el.google_id,
         creatAt: el.created_at,
       };
       return userObj;

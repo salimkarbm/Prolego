@@ -24,10 +24,14 @@ describe('test', () => {
         expect(store.getUserById).toBeDefined();
         expect(result).toBeTruthy();
     }));
-    fit('should have a index method', () => __awaiter(void 0, void 0, void 0, function* () {
+    it('should have a index method', () => __awaiter(void 0, void 0, void 0, function* () {
         const result = yield store.index();
-        console.log(result);
         expect(store.index).toBeDefined();
         expect(result).toBeInstanceOf(Array);
+    }));
+    it('should have a getUserbyEmail method', () => __awaiter(void 0, void 0, void 0, function* () {
+        const result = yield store.getUserByEmail('user@example.com');
+        expect(result.email).toEqual('user@example.com');
+        expect(store.getUserByEmail).toBeDefined();
     }));
 });

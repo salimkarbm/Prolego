@@ -13,7 +13,7 @@ describe('Test users endpoints', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
   });
 
-  it('create endpoint should create a user', async () => {
+  it('/api/v1/signup endpoint should create a user', async () => {
     const request = supertest(server);
     const result = await request
       .post('/api/v1/signup')
@@ -27,7 +27,7 @@ describe('Test users endpoints', () => {
     expect(result.body.status).toEqual('success');
     expect(result.type).toEqual('application/json');
   });
-  it('login endpoint should login the users', async () => {
+  it('/api/v1/login endpoint should login the users', async () => {
     const request = supertest(server);
     const result = await request
       .post('/api/v1/login')
@@ -39,5 +39,18 @@ describe('Test users endpoints', () => {
     expect(result.body.status).toEqual('success');
     expect(result.type).toEqual('application/json');
     expect(result.body.token).toBeInstanceOf(String);
+  });
+  it('/api/v1/users-email endpoint should get users by email', async () => {
+    const request = supertest(server);
+    const result = await request
+      .get('/api/v1/users-email')
+      .set('Accept', 'application/json')
+      .send({
+        email: 'user@example.com',
+      });
+    expect(result.body.status).toEqual('success');
+    expect(result.status).toEqual(200);
+    expect(result.type).toEqual('application/json');
+    expect(result.body.data.email).toEqual('user@example.com');
   });
 });

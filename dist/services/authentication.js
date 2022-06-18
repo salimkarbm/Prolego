@@ -77,5 +77,33 @@ class AuthService {
             }
         });
     }
+    upsertGoogleUser(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const newUser = {
+                firstName: user.firstname,
+                lastName: user.lastname,
+                password: user.password,
+                email: user.email,
+                googleId: user.google_id,
+            };
+            try {
+                const conn = yield database_1.default.client.connect();
+                const sql = 'INSERT INTO users (firstname, lastname, password_digest, email, google_id) VALUES($1, $2, $3, $4,$5) RETURNING * ';
+                const hash = yield bcrypt_1.default.hash(newUser.password + bcryptCredentials_1.pepper, bcryptCredentials_1.saltRound);
+                const result = yield conn.query(sql, [
+                    newUser.firstName,
+                    newUser.lastName,
+                    hash,
+                    newUser.email,
+                    newUser.googleId,
+                ]);
+                conn.release();
+                return result.rows[0];
+            }
+            catch (err) {
+                throw new appError_1.default(`Unable to upsert user ${newUser.firstName},`, 400);
+            }
+        });
+    }
 }
 exports.default = AuthService;
