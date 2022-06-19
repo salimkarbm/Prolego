@@ -46,6 +46,10 @@ export const authenticate = async (
   res: Response,
   next: NextFunction
 ) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   const loginUser: LoginUser = {
     password: req.body.password,
     email: req.body.email,

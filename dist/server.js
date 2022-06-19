@@ -39,7 +39,7 @@ app.use((0, compression_1.default)());
 // use cors middleware
 app.use((0, cors_1.default)());
 // add your routes
-app.set('view engine', 'ejs');
+// app.set('view engine', 'ejs');
 // Body parser middleware
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
@@ -47,9 +47,9 @@ app.use(express_1.default.urlencoded({ extended: false }));
 app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("<h3 style=background:black;padding:6em;color:white><center>Welcome To Prolego. Your World Of High-Performance Awaits, We’re so glad you’re here! You are now part of a growing community of professionals contributing to the reduction of academic dropout and failure by predicting student's academic performance across the globe via Prolego Whether you’ve come to create something of your own or for your company, we’ve got something for you. Let’s go!.</center></h3>");
 }));
-app.get('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.render('login');
-}));
+// app.get('/login', async (req: Request, res: Response) => {
+//   res.render('login');
+// });
 // Routes
 (0, user_1.default)(app);
 (0, authentication_1.default)(app);

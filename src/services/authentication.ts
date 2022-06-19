@@ -36,6 +36,7 @@ class AuthService {
       const conn = await DB.client.connect();
       const sql = `SELECT id, email, password_digest FROM users WHERE email=$1`;
       const result = await conn.query(sql, [email]);
+      conn.release();
       if (result.rows.length > 0) {
         const user = result.rows[0];
         if (await bcrypt.compare(password + pepper, user.password_digest)) {

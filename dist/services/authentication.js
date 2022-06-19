@@ -49,6 +49,7 @@ class AuthService {
                 const conn = yield database_1.default.client.connect();
                 const sql = `SELECT id, email, password_digest FROM users WHERE email=$1`;
                 const result = yield conn.query(sql, [email]);
+                conn.release();
                 if (result.rows.length > 0) {
                     const user = result.rows[0];
                     if (yield bcrypt_1.default.compare(password + bcryptCredentials_1.pepper, user.password_digest)) {
