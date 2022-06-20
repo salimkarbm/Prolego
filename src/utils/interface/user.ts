@@ -21,6 +21,6 @@ export interface UpdateUser {
   id?: number;
   email: string;
   password: string;
-  verificationToken?: string;
+  passwordResetToken?: string;
   password_Confirmation?: string;
 }

@@ -12,10 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.index = exports.getUserById = void 0;
+exports.forgotPasswordMail = exports.index = exports.getUserById = void 0;
 const user_1 = __importDefault(require("../../models/user"));
 const appError_1 = __importDefault(require("../../utils/errors/appError"));
+const authentication_1 = __importDefault(require("../../services/authentication"));
+const codegenerator_1 = __importDefault(require("../../utils/codegenerator"));
+const mailer_1 = __importDefault(require("../../utils/mailer"));
 const store = new user_1.default();
+const authStore = new authentication_1.default();
 const getUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = Number(req.params.id);
@@ -63,8 +67,27 @@ const index = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
     catch (err) {
-        console.log(err);
         throw new appError_1.default('Something went wrong, Unable to get users', 400);
     }
 });
 exports.index = index;
+const forgotPasswordMail = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.body;
+    try {
+        const foundemail = yield authStore.checkEmail(email);
+        if (!foundemail) {
+            return next(new appError_1.default('Fill in the right email', 400));
+        }
+        const token = (0, codegenerator_1.default)(30);
+        const result = yield store.forgotPassword(email, req.params.passwordResetToken);
+        (0, mailer_1.default)(email, token);
+        return res
+            .status(204)
+            .json({ message: 'Password Resent Email Sent Successfully', result });
+    }
+    catch (err) {
+        console.log(err);
+        return next(err);
+    }
+});
+exports.forgotPasswordMail = forgotPasswordMail;

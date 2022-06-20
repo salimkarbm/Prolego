@@ -1,24 +1,36 @@
 import nodemail from 'nodemailer';
+import AppError from './errors/appError';
 
-const {
-  MAIL_HOST,
-  MAIL_PORT,
-  MAIL_USER,
-  MAIL_PASSWORD,
-  MAILER,
-  PORT,
-  ADDRESS,
-} = process.env;
+const { MAIL_HOST, MAIL_USER, MAIL_PASSWORD, SERVICE } = process.env;
 
-export const resetMail = async () => {
+const transport = nodemail.createTransport({
+  host: MAIL_HOST,
+  service: SERVICE,
+  port: 587,
+  secure: true,
+  auth: {
+    user: MAIL_USER,
+    pass: MAIL_PASSWORD,
+  },
+});
+
+const resetPasswordEmail = async (email: string, confirmationCode?: string) => {
   try {
-    const transport = nodemail.createTransport({
-      host: MAIL_HOST,
-      port: MAIL_PORT,
-      auth: {
-        user: MAIL_USER,
-        pass: MAIL_PASSWORD,
-      },
+    await transport.sendMail({
+      from: String(MAIL_USER),
+      to: email,
+      subject: 'Request to change your Password',
+      html: `
+          <div> <h1>Reset your Password</h1>
+          <p>We are sending you this email because you requested to change your password.
+          click on the link to change your password</p>
+          <h3>Code: <strong>${confirmationCode}</strong></h3>
+          <p>Please Pass this as your request body.</p>
+          </div>`,
     });
-  } catch (error) {}
+  } catch (error) {
+    throw new AppError('Reset Password email not sent, please try again.', 400);
+  }
 };
+
+export default resetPasswordEmail;
