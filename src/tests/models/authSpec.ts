@@ -61,4 +61,16 @@ describe('Test users model', () => {
     const result = await authStore.authenticate('userEmail', 'invalidpassword');
     expect(result).toBeNull();
   });
+
+  it('it should have forgot password method', () => {
+    expect(authStore.forgotPassword).toBeDefined();
+  });
+
+  it('forgot pasword method should return user', async () => {
+    const result = await authStore.forgotPassword(
+      'abdulalimzakariyah@gmail.com',
+      '3hzc0fkip9h'
+    );
+    expect(result).toBeTruthy();
+  });
 });

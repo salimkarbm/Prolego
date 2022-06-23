@@ -13,23 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = __importDefault(require("../../models/user"));
-// const users = new UserStore();
-// describe('User model', () => {
-//   it('should have getall method', () => {
-//     expect(users.getAllUsers).toBeDefined();
-//   });
-//   it('should return the specific number of users', async () => {
-//     const result = await users.getAllUsers();
-//     expect(result.length).toEqual(12);
-//   });
-//   it('should prove users are more than 0', async () => {
-//     const result = await users.getAllUsers();
-//     expect(result.length).toBeGreaterThan(0);
-//   });
-//   it('should return all users', async () => {
-//     const data = await users.getAllUsers();
-//     expect(data).toContain(jasmine.objectContaining({}));
-// })
 const store = new user_1.default();
 describe('test', () => {
     it('it should have a getUserById method', () => {
@@ -45,5 +28,10 @@ describe('test', () => {
         const result = yield store.index();
         expect(store.index).toBeDefined();
         expect(result).toBeInstanceOf(Array);
+    }));
+    it('should have a getUserbyEmail method', () => __awaiter(void 0, void 0, void 0, function* () {
+        const result = yield store.getUserByEmail('user@example.com');
+        expect(result.email).toEqual('user@example.com');
+        expect(store.getUserByEmail).toBeDefined();
     }));
 });

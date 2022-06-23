@@ -1,6 +1,11 @@
 import express from 'express';
 import { check } from 'express-validator';
-import { create, authenticate } from '../controllers/authentication';
+import {
+  create,
+  authenticate,
+  googleAuth,
+  forgotPasswordMail,
+} from '../controllers/authentication';
 import verifyUser from '../../middlewares/authentication';
 
 const authRoutes = (app: express.Application) => {
@@ -30,6 +35,20 @@ const authRoutes = (app: express.Application) => {
     ],
     authenticate,
     verifyUser
+  );
+  app.post('/api/v1/auth/google', googleAuth);
+  app.post(
+    '/api/v1/users/forgotpassword',
+    [
+      check('email')
+        .isEmail()
+        .trim()
+        .escape()
+        .normalizeEmail()
+        .notEmpty()
+        .isString(),
+    ],
+    forgotPasswordMail
   );
 };
 

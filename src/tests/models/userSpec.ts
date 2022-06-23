@@ -1,25 +1,5 @@
 import UserStore from '../../models/user';
 
-// const users = new UserStore();
-
-// describe('User model', () => {
-//   it('should have getall method', () => {
-//     expect(users.getAllUsers).toBeDefined();
-//   });
-
-//   it('should return the specific number of users', async () => {
-//     const result = await users.getAllUsers();
-//     expect(result.length).toEqual(12);
-//   });
-
-//   it('should prove users are more than 0', async () => {
-//     const result = await users.getAllUsers();
-//     expect(result.length).toBeGreaterThan(0);
-//   });
-//   it('should return all users', async () => {
-//     const data = await users.getAllUsers();
-//     expect(data).toContain(jasmine.objectContaining({}));
-// })
 const store = new UserStore();
 
 describe('test', () => {
@@ -37,5 +17,10 @@ describe('test', () => {
     const result = await store.index();
     expect(store.index).toBeDefined();
     expect(result).toBeInstanceOf(Array);
+  });
+  it('should have a getUserbyEmail method', async () => {
+    const result = await store.getUserByEmail('user@example.com');
+    expect(result.email).toEqual('user@example.com');
+    expect(store.getUserByEmail).toBeDefined();
   });
 });

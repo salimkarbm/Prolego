@@ -21,6 +21,10 @@ export interface UpdateUser {
   id?: number;
   email: string;
   password: string;
-  passwordResetToken?: string;
+  createResetToken?: string;
   password_Confirmation?: string;
+}
+
+export interface GoogleUser extends User {
+  google_id: string;
 }

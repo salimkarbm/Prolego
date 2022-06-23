@@ -25,5 +25,15 @@ const authRoutes = (app) => {
         (0, express_validator_1.check)('email').isEmail().trim().escape().normalizeEmail().not().isEmpty(),
         (0, express_validator_1.check)('password').isLength({ min: 8 }).trim().escape().notEmpty(),
     ], authentication_1.authenticate, authentication_2.default);
+    app.post('/api/v1/auth/google', authentication_1.googleAuth);
+    app.post('/api/v1/users/forgotpassword', [
+        (0, express_validator_1.check)('email')
+            .isEmail()
+            .trim()
+            .escape()
+            .normalizeEmail()
+            .notEmpty()
+            .isString(),
+    ], authentication_1.forgotPasswordMail);
 };
 exports.default = authRoutes;

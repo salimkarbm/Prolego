@@ -1,12 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import UserStore from '../../models/user';
 import AppError from '../../utils/errors/appError';
-import AuthService from '../../services/authentication';
-import codeGenerator from '../../utils/codegenerator';
-import resetPasswordEmail from '../../utils/mailer';
 
 const store = new UserStore();
-const authStore = new AuthService();
 
 export const getUserById = async (
   req: Request,
@@ -26,7 +22,33 @@ export const getUserById = async (
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
-        createAt: user.created_at,
+        createdAt: user.created_at,
+      },
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const getUserByEmail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const email = req.body.email as string;
+    const user = await store.getUserByEmail(email);
+    if (!user) {
+      return next(new AppError('user not found', 400));
+    }
+    return res.status(200).json({
+      status: 'success',
+      data: {
+        id: user.id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        createdAt: user.created_at,
       },
     });
   } catch (err) {
@@ -46,6 +68,7 @@ export const index = async (req: Request, res: Response) => {
         firstName: el.firstname,
         lastname: el.lastname,
         email: el.email,
+        googleId: el.google_id,
         creatAt: el.created_at,
       };
       return userObj;
@@ -58,32 +81,5 @@ export const index = async (req: Request, res: Response) => {
     });
   } catch (err) {
     throw new AppError('Something went wrong, Unable to get users', 400);
-  }
-};
-
-export const forgotPasswordMail = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { email } = req.body;
-  try {
-    const foundemail = await authStore.checkEmail(email);
-    if (!foundemail) {
-      return next(new AppError('Fill in the right email', 400));
-    }
-
-    const token = codeGenerator(30);
-    const result = await store.forgotPassword(
-      email,
-      req.params.passwordResetToken
-    );
-    resetPasswordEmail(email, token);
-    return res
-      .status(204)
-      .json({ message: 'Password Resent Email Sent Successfully', result });
-  } catch (err) {
-    console.log(err);
-    return next(err);
   }
 };
