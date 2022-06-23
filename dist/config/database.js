@@ -9,13 +9,19 @@ dotenv_1.default.config();
 const { NODE_ENV, Database, User, Host, DATABASE_PORT, POSTGRES_TEST_DB, Password, DATABASE_URL, } = process.env;
 let client;
 if (NODE_ENV === 'production') {
-    const connectionString = DATABASE_URL;
     client = new pg_1.Pool({
-        connectionString,
-        ssl: {
-            rejectUnauthorized: false,
-        },
+        host: Host,
+        user: User,
+        database: Database,
+        password: Password,
     });
+    // const connectionString = DATABASE_URL;
+    // client = new Pool({
+    //   connectionString,
+    //   ssl: {
+    //     rejectUnauthorized: false,
+    //   },
+    // });
 }
 else if (NODE_ENV === 'development') {
     client = new pg_1.Pool({
@@ -23,7 +29,10 @@ else if (NODE_ENV === 'development') {
         user: User,
         database: Database,
         password: Password,
+<<<<<<< HEAD
         port: parseInt(DATABASE_PORT, 10),
+=======
+>>>>>>> 1b1c16fae12c46bc70c95763425f67ba5ca1cd8c
     });
 }
 else {

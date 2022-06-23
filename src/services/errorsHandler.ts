@@ -1,6 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
-
 import AppError from '../utils/errors/appError';
+
+const handleExpressValidatorError = (err: any) => {
+  const errors = err.errors.map((el: any) => {
+    const result = Object.values(el);
+    return result[2];
+  });
+  const message = `Invalid input data ${errors.join(', ')}.`;
+  return new AppError(message, 400);
+};
 
 const handleJWTError = () => {
   return new AppError('Invalid token. please log in again ', 401);
@@ -48,6 +56,9 @@ export default (err: any, req: Request, res: Response, next: NextFunction) => {
     let error = { ...err };
     if (error.name === 'JsonWebTokenError') error = handleJWTError();
     if (error.name === 'TokenExpiredError') error = handleJWTExpiredError();
+    if (error.errors instanceof Array) {
+      error = handleExpressValidatorError(error);
+    }
     sendErrorPro(error, res);
   }
 };
