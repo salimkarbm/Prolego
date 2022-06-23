@@ -20,8 +20,7 @@ export const create = async (
 ) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const err = errors.array();
-    return next(err);
+    return next(errors);
   }
   const user: User = {
     firstname: req.body.firstname,
@@ -48,7 +47,7 @@ export const authenticate = async (
 ) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return next(errors);
   }
   const loginUser: LoginUser = {
     password: req.body.password,
@@ -60,7 +59,7 @@ export const authenticate = async (
       loginUser.password
     );
     if (user === null) {
-      return next(new AppError('incorrect password or email', 400));
+      return next(new AppError('incorrect email and password', 401));
     }
     createSendToken(user, 200, req, res);
   } catch (err) {

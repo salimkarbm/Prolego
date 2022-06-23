@@ -13,8 +13,8 @@
     "test": "npm run tsc && NODE_ENV=test npm run jasmine",
     "test-db": "NODE_ENV=test db-migrate --env test up",
     "drop-test-db": "NODE_ENV=test db-migrate --env test up && jasmine && db-migrate db:drop test",
-    "dev": " npm run tsc && nodemon --files ./src/server.ts",
-    "prod": "NODE_ENV=production nodemon ./dist/server.js",
+    "dev": "npm run tsc && nodemon --files ./src/server.ts",
+    "prod": "npm run tsc && NODE_ENV=production nodemon ./dist/server.js",
     "tsc": "tsc",
     "deploy": "git add . && git commit -m Heroku && git push heroku main"
   },

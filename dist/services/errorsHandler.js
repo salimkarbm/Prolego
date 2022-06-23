@@ -4,6 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const appError_1 = __importDefault(require("../utils/errors/appError"));
+const handleExpressValidatorError = (err) => {
+    const errors = err.errors.map((el) => {
+        const result = Object.values(el);
+        return result[2];
+    });
+    const message = `Invalid input data ${errors.join(', ')}.`;
+    return new appError_1.default(message, 400);
+};
 const handleJWTError = () => {
     return new appError_1.default('Invalid token. please log in again ', 401);
 };
@@ -49,6 +57,9 @@ exports.default = (err, req, res, next) => {
             error = handleJWTError();
         if (error.name === 'TokenExpiredError')
             error = handleJWTExpiredError();
+        if (error.errors instanceof Array) {
+            error = handleExpressValidatorError(error);
+        }
         sendErrorPro(error, res);
     }
 };

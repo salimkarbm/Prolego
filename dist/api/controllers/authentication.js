@@ -26,8 +26,7 @@ const store = new user_1.default();
 const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        const err = errors.array();
-        return next(err);
+        return next(errors);
     }
     const user = {
         firstname: req.body.firstname,
@@ -51,7 +50,7 @@ exports.create = create;
 const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return next(errors);
     }
     const loginUser = {
         password: req.body.password,
@@ -60,7 +59,7 @@ const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     try {
         const user = yield authStore.authenticate(loginUser.email, loginUser.password);
         if (user === null) {
-            return next(new appError_1.default('incorrect password or email', 400));
+            return next(new appError_1.default('incorrect email and password', 401));
         }
         (0, httpsCookie_1.default)(user, 200, req, res);
     }
