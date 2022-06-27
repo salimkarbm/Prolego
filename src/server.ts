@@ -6,6 +6,7 @@ import errorHandler from './services/errorsHandler';
 import AppError from './utils/errors/appError';
 import authRoutes from './api/routes/authentication';
 import userRoutes from './api/routes/user';
+import studentInfoRoutes from './api/routes/studentsInfo';
 
 process.on('uncaughtException', (err) => {
   console.log(err.name, err.message);
@@ -53,6 +54,7 @@ app.get('/', async (req: Request, res: Response) => {
 // Routes
 userRoutes(app);
 authRoutes(app);
+studentInfoRoutes(app);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`can't find ${req.originalUrl} on server!`, 404));

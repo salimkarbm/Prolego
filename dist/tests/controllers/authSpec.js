@@ -16,6 +16,7 @@ const supertest_1 = __importDefault(require("supertest"));
 const server_1 = __importDefault(require("../../server"));
 describe('Test users endpoints', () => {
     let originalTimeout;
+    const request = (0, supertest_1.default)(server_1.default);
     beforeEach(function () {
         originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
         jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
@@ -24,7 +25,6 @@ describe('Test users endpoints', () => {
         jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
     });
     it('/api/v1/signup endpoint should create a user', () => __awaiter(void 0, void 0, void 0, function* () {
-        const request = (0, supertest_1.default)(server_1.default);
         const result = yield request
             .post('/api/v1/signup')
             .set('Accept', 'application/json')
@@ -32,26 +32,24 @@ describe('Test users endpoints', () => {
             firstname: 'UserOne',
             lastname: 'User',
             email: 'user@example.com',
-            password: 'pass1',
+            password: 'pass1234',
         });
         expect(result.body.status).toEqual('success');
         expect(result.type).toEqual('application/json');
     }));
     it('/api/v1/login endpoint should login the users', () => __awaiter(void 0, void 0, void 0, function* () {
-        const request = (0, supertest_1.default)(server_1.default);
         const result = yield request
             .post('/api/v1/login')
             .set('Accept', 'application/json')
             .send({
             email: 'user@example.com',
-            password: 'pass112',
+            password: 'pass1234',
         });
         expect(result.body.status).toEqual('success');
         expect(result.type).toEqual('application/json');
         expect(result.body.token).toBeInstanceOf(String);
     }));
     it('/api/v1/users-email endpoint should get users by email', () => __awaiter(void 0, void 0, void 0, function* () {
-        const request = (0, supertest_1.default)(server_1.default);
         const result = yield request
             .get('/api/v1/users-email')
             .set('Accept', 'application/json')
