@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import fileConverter from '../../utils/csvtojsonConverter';
-// import AppError from '../../utils/errors/appError';
+import AppError from '../../utils/errors/appError';
 import StudentInfo from '../../utils/interface/studentInfo';
-import StudentInfoStore from '../../models/studentInfo';
+import StudentInfoStore from '../../models/students';
 
 const store = new StudentInfoStore();
 
-const saveDataToDB = async (
+export const saveDataToDB = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -50,4 +50,18 @@ const saveDataToDB = async (
   }
 };
 
-export default saveDataToDB;
+export const index = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const students = await store.index();
+    if (!students) {
+      return next(new AppError('students not found', 404));
+    }
+    res.status(200).json(students);
+  } catch (err) {
+    return next(err);
+  }
+};

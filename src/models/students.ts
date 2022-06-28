@@ -15,5 +15,17 @@ class StudentInfoStore {
       throw new AppError(`Unable to create student.`, 400);
     }
   }
+
+  async index(): Promise<StudentInfo[]> {
+    try {
+      const conn = await DB.client.connect();
+      const sql = 'SELECT * FROM students_info';
+      const result = await conn.query(sql);
+      conn.release();
+      return result.rows;
+    } catch (err) {
+      throw new AppError(`Unable to fetch students from Database.`, 400);
+    }
+  }
 }
 export default StudentInfoStore;

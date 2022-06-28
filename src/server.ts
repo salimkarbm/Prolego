@@ -6,7 +6,7 @@ import errorHandler from './services/errorsHandler';
 import AppError from './utils/errors/appError';
 import authRoutes from './api/routes/authentication';
 import userRoutes from './api/routes/user';
-import studentInfoRoutes from './api/routes/studentsInfo';
+import studentInfoRoutes from './api/routes/students';
 
 process.on('uncaughtException', (err) => {
   console.log(err.name, err.message);
