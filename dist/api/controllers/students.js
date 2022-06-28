@@ -12,8 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.index = exports.saveDataToDB = void 0;
+exports.show = exports.index = exports.saveDataToDB = void 0;
 const csvtojsonConverter_1 = __importDefault(require("../../utils/csvtojsonConverter"));
+const appError_1 = __importDefault(require("../../utils/errors/appError"));
 const students_1 = __importDefault(require("../../models/students"));
 const store = new students_1.default();
 const saveDataToDB = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -61,7 +62,7 @@ const index = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const students = yield store.index();
         if (!students) {
-            return res.status(404).json({ message: 'students not found' });
+            return next(new appError_1.default('Unable to fetch students from database', 404));
         }
         res.status(200).json(students);
     }
@@ -70,3 +71,15 @@ const index = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.index = index;
+const show = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const student = yield store.show(req.params.field);
+        if (!student)
+            return next(new appError_1.default('student not found', 404));
+        res.status(200).json(student);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.show = show;

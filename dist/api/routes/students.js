@@ -4,5 +4,6 @@ const students_1 = require("../controllers/students");
 const studentInfoRoutes = (app) => {
     app.post('/api/v1/students', students_1.saveDataToDB);
     app.get('/api/v1/students', students_1.index);
+    app.get('/api/v1/students/:field', students_1.show);
 };
 exports.default = studentInfoRoutes;

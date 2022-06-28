@@ -58,10 +58,20 @@ export const index = async (
   try {
     const students = await store.index();
     if (!students) {
-      return next(new AppError('students not found', 404));
+      return next(new AppError('Unable to fetch students from database', 404));
     }
     res.status(200).json(students);
   } catch (err) {
     return next(err);
+  }
+};
+
+export const show = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const student = await store.show(req.params.field);
+    if (!student) return next(new AppError('student not found', 404));
+    res.status(200).json(student);
+  } catch (err) {
+    next(err);
   }
 };

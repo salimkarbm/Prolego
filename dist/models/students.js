@@ -23,7 +23,6 @@ class StudentInfoStore {
                 const data = Object.values(studenData);
                 const res = yield conn.query(sql, data);
                 conn.release();
-                console.log(res);
                 return res.rows;
             }
             catch (err) {
@@ -42,6 +41,21 @@ class StudentInfoStore {
             }
             catch (err) {
                 throw new appError_1.default(`Unable to fetch students from Database.`, 400);
+            }
+        });
+    }
+    show(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const sql = `SELECT * FROM students_info WHERE id=${id}`;
+                const conn = yield database_1.default.client.connect();
+                const result = yield conn.query(sql);
+                const student = result.rows[0];
+                conn.release();
+                return student;
+            }
+            catch (err) {
+                throw new appError_1.default(`unable find user with id ${id}.`, 400);
             }
         });
     }

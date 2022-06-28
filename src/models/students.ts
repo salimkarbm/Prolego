@@ -27,5 +27,18 @@ class StudentInfoStore {
       throw new AppError(`Unable to fetch students from Database.`, 400);
     }
   }
+
+  async show(id: string): Promise<StudentInfo> {
+    try {
+      const sql = `SELECT * FROM students_info WHERE field=($1)`;
+      const conn = await DB.client.connect();
+      const result = await conn.query(sql, [id]);
+      const student = result.rows[0];
+      conn.release();
+      return student;
+    } catch (err) {
+      throw new AppError(`unable find student with id ${id}.`, 400);
+    }
+  }
 }
 export default StudentInfoStore;
