@@ -17,6 +17,13 @@ export interface jwtToken {
   iat: number;
   exp: number;
 }
+export interface UpdateUser {
+  id?: number;
+  email: string;
+  password: string;
+  createResetToken?: string;
+  password_Confirmation?: string;
+}
 
 export interface GoogleUser extends User {
   google_id: string;

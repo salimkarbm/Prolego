@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import DB from '../config/database';
-import { User, GoogleUser } from '../utils/interface/user';
+import { User, GoogleUser, UpdateUser } from '../utils/interface/user';
 import AppError from '../utils/errors/appError';
 import { pepper, saltRound } from '../utils/bcryptCredentials';
 
@@ -87,6 +87,23 @@ class AuthService {
       return result.rows[0];
     } catch (err) {
       throw new AppError(`Unable to upsert user ${newUser.firstName},`, 400);
+    }
+  }
+
+  async forgotPassword(
+    email: string,
+    createpasswordToken: string
+  ): Promise<UpdateUser[]> {
+    try {
+      const conn = await DB.client.connect();
+      const sql =
+        'UPDATE users SET passwordResetToken = ($1) WHERE email = ($2) RETURNING *';
+      const values = [createpasswordToken, email];
+      const res = await conn.query(sql, values);
+      conn.release();
+      return res.rows[0].email;
+    } catch (error) {
+      throw new AppError(`Unable to get user from the database`, 400);
     }
   }
 }

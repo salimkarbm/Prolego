@@ -72,4 +72,11 @@ describe('Test users model', () => {
         const result = yield authStore.authenticate('userEmail', 'invalidpassword');
         expect(result).toBeNull();
     }));
+    it('it should have forgot password method', () => {
+        expect(authStore.forgotPassword).toBeDefined();
+    });
+    it('forgot pasword method should return user', () => __awaiter(void 0, void 0, void 0, function* () {
+        const result = yield authStore.forgotPassword('abdulalimzakariyah@gmail.com', '3hzc0fkip9h');
+        expect(result).toBeTruthy();
+    }));
 });

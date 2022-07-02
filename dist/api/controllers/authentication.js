@@ -12,13 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.googleAuth = exports.authenticate = exports.create = void 0;
+exports.forgotPasswordMail = exports.googleAuth = exports.authenticate = exports.create = void 0;
 const google_auth_library_1 = require("google-auth-library");
 const express_validator_1 = require("express-validator");
 const appError_1 = __importDefault(require("../../utils/errors/appError"));
 const authentication_1 = __importDefault(require("../../services/authentication"));
 const user_1 = __importDefault(require("../../models/user"));
 const httpsCookie_1 = __importDefault(require("../../utils/httpsCookie"));
+const codegenerator_1 = __importDefault(require("../../utils/codegenerator"));
+const mailer_1 = __importDefault(require("../../utils/mailer"));
 // google client
 const client = new google_auth_library_1.OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const authStore = new authentication_1.default();
@@ -117,3 +119,28 @@ const googleAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.googleAuth = googleAuth;
+const forgotPasswordMail = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        const err = errors.array();
+        return next(err);
+    }
+    const { email } = req.body;
+    try {
+        const foundemail = yield authStore.checkEmail(email);
+        if (!foundemail) {
+            return next(new appError_1.default('Fill in the right email', 400));
+        }
+        const token = (0, codegenerator_1.default)(36);
+        const result = yield authStore.forgotPassword(email, token);
+        yield (0, mailer_1.default)(email, token);
+        return res.status(200).json({
+            message: 'Password Resent Email Sent Successfully',
+            data: result,
+        });
+    }
+    catch (err) {
+        return next(err);
+    }
+});
+exports.forgotPasswordMail = forgotPasswordMail;
