@@ -92,16 +92,16 @@ class AuthService {
 
   async forgotPassword(
     email: string,
-    createpasswordToken: string
+    createPasswordToken: string
   ): Promise<UpdateUser[]> {
     try {
       const conn = await DB.client.connect();
       const sql =
         'UPDATE users SET passwordResetToken = ($1) WHERE email = ($2) RETURNING *';
-      const values = [createpasswordToken, email];
+      const values = [createPasswordToken, email];
       const res = await conn.query(sql, values);
       conn.release();
-      return res.rows[0].email;
+      return res.rows[0].passwordResetToken;
     } catch (error) {
       throw new AppError(`Unable to get user from the database`, 400);
     }
