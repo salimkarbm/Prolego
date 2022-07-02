@@ -8,7 +8,7 @@ const {
   Database,
   User,
   Host,
-  Port,
+  DATABASE_PORT,
   POSTGRES_TEST_DB,
   Password,
   DATABASE_URL,
@@ -30,6 +30,7 @@ if (NODE_ENV === 'production') {
     user: User,
     database: Database,
     password: Password,
+    port: parseInt(DATABASE_PORT as string, 10),
   });
 } else {
   client = new Pool({
@@ -37,7 +38,7 @@ if (NODE_ENV === 'production') {
     user: User,
     database: POSTGRES_TEST_DB,
     password: Password,
-    port: parseInt(Port as string, 10),
+    port: parseInt(DATABASE_PORT as string, 10),
   });
 }
 
@@ -47,7 +48,7 @@ export default {
   Database,
   User,
   Host,
-  Port,
+  DATABASE_PORT,
   POSTGRES_TEST_DB,
   Password,
 };

@@ -6,6 +6,8 @@ import AppError from '../../utils/errors/appError';
 import AuthService from '../../services/authentication';
 import UserStore from '../../models/user';
 import createSendToken from '../../utils/httpsCookie';
+import codeGenerator from '../../utils/codegenerator';
+import resetPasswordEmail from '../../utils/mailer';
 
 // google client
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -118,5 +120,34 @@ export const googleAuth = async (
         401
       )
     );
+  }
+};
+
+export const forgotPasswordMail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const err = errors.array();
+    return next(err);
+  }
+  const { email } = req.body;
+  try {
+    const foundemail = await authStore.checkEmail(email);
+
+    if (!foundemail) {
+      return next(new AppError('Fill in the right email', 400));
+    }
+    const token = codeGenerator(36) as string;
+    const result = await authStore.forgotPassword(email, token);
+    await resetPasswordEmail(email, token);
+    return res.status(200).json({
+      message: 'Password Resent Email Sent Successfully',
+      data: result,
+    });
+  } catch (err) {
+    return next(err);
   }
 };

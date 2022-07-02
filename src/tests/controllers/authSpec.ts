@@ -53,4 +53,16 @@ describe('Test users endpoints', () => {
     expect(result.type).toEqual('application/json');
     expect(result.body.data.email).toEqual('user@example.com');
   });
+
+  it('/api/v1/users/forgotpassword endpoint should send a mail', async () => {
+    const request = supertest(server);
+    const result = await request
+      .post('/api/v1/users/forgotpassword')
+      .set('Accept', 'application/json')
+      .send({
+        email: 'user@example.com',
+      });
+    expect(result.status).toEqual(200);
+    expect(result.type).toEqual('application/json');
+  });
 });

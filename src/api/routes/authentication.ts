@@ -4,6 +4,7 @@ import {
   create,
   authenticate,
   googleAuth,
+  forgotPasswordMail,
 } from '../controllers/authentication';
 import verifyUser from '../../middlewares/authentication';
 
@@ -36,6 +37,19 @@ const authRoutes = (app: express.Application) => {
     verifyUser
   );
   app.post('/api/v1/auth/google', googleAuth);
+  app.post(
+    '/api/v1/users/forgotpassword',
+    [
+      check('email')
+        .isEmail()
+        .trim()
+        .escape()
+        .normalizeEmail()
+        .notEmpty()
+        .isString(),
+    ],
+    forgotPasswordMail
+  );
 };
 
 export default authRoutes;

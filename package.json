@@ -4,6 +4,7 @@
   "description": "Prolego is a Robust web application for predicting student academic performance, it offers to contribute to the reduction of academic dropout and failure in educational institutes by predicting student's academic performance including drop off rate, academic success, to identify students at risk at an early stage of their academic path, so that strategies to support them can be put into place, in order to help Educators not only to focus more on bright students but also to initially identify students with low academic achievement and find ways to support them.",
   "main": "server.js",
   "scripts": {
+    "build": "npm run tsc && npm run jasmine",
     "start": "node src/server.ts",
     "postinstall": "tsc",
     "lint": "eslint --ext .ts . --fix",
@@ -42,6 +43,7 @@
     "google-auth-library": "^8.0.2",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.5",
+    "nodemailer": "^6.7.5",
     "pg": "^8.7.3"
   },
   "devDependencies": {
@@ -52,6 +54,7 @@
     "@types/jasmine": "^4.0.3",
     "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^17.0.34",
+    "@types/nodemailer": "^6.4.4",
     "@types/pg": "^8.6.5",
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.18.0",

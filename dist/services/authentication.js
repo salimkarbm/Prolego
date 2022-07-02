@@ -106,5 +106,20 @@ class AuthService {
             }
         });
     }
+    forgotPassword(email, createpasswordToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const conn = yield database_1.default.client.connect();
+                const sql = 'UPDATE users SET passwordResetToken = ($1) WHERE email = ($2) RETURNING *';
+                const values = [createpasswordToken, email];
+                const res = yield conn.query(sql, values);
+                conn.release();
+                return res.rows[0].email;
+            }
+            catch (error) {
+                throw new appError_1.default(`Unable to get user from the database`, 400);
+            }
+        });
+    }
 }
 exports.default = AuthService;
