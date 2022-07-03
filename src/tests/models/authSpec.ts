@@ -63,11 +63,11 @@ describe('Test users model', () => {
   });
 
   it('it should have forgot password method', () => {
-    expect(authStore.forgotPassword).toBeDefined();
+    expect(authStore.passwordResetToken).toBeDefined();
   });
 
   it('forgot pasword method should return user', async () => {
-    const result = await authStore.forgotPassword(
+    const result = await authStore.passwordResetToken(
       'abdulalimzakariyah@gmail.com',
       '3hzc0fkip9h'
     );

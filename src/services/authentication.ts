@@ -90,7 +90,7 @@ class AuthService {
     }
   }
 
-  async forgotPassword(
+  async passwordResetToken(
     email: string,
     createpasswordToken: string
   ): Promise<UpdateUser[]> {
@@ -104,6 +104,35 @@ class AuthService {
       return res.rows[0].email;
     } catch (error) {
       throw new AppError(`Unable to get user from the database`, 400);
+    }
+  }
+
+  async getUserByToken(token: string): Promise<User> {
+    try {
+      const sql = 'SELECT * FROM users WHERE passwordResetToken =($1)';
+      const conn = await DB.client.connect();
+      const result = await conn.query(sql, [token]);
+      conn.release();
+      const user = result.rows[0];
+      return user;
+    } catch (err) {
+      throw new AppError(`Unable to find user with id:${token}.`, 400);
+    }
+  }
+
+  async updatePassword(id: string, password: string): Promise<User> {
+    try {
+      const sql = `UPDATE users SET password_digest=($1) WHERE id=${id} RETURNING *`;
+      const conn = await DB.client.connect();
+      const result = await conn.query(sql, [password]);
+      const user = result.rows[0];
+      conn.release();
+      return user;
+    } catch (err) {
+      throw new AppError(
+        `Something went wrong unable to update user with ID:${id}`,
+        400
+      );
     }
   }
 }

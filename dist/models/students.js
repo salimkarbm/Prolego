@@ -47,15 +47,29 @@ class StudentInfoStore {
     show(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `SELECT * FROM students_info WHERE id=${id}`;
+                const sql = `SELECT * FROM students_info WHERE field=($1)`;
                 const conn = yield database_1.default.client.connect();
-                const result = yield conn.query(sql);
+                const result = yield conn.query(sql, [id]);
                 const student = result.rows[0];
                 conn.release();
                 return student;
             }
             catch (err) {
-                throw new appError_1.default(`unable find user with id ${id}.`, 400);
+                throw new appError_1.default(`unable find student with id ${id}.`, 400);
+            }
+        });
+    }
+    studentByCategory(category) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const sql = `SELECT * FROM students_info WHERE studentstatus='($1) OR gender =($1)'`;
+                const conn = yield database_1.default.client.connect();
+                const result = yield conn.query(sql);
+                conn.release();
+                return result.rows;
+            }
+            catch (err) {
+                throw new appError_1.default(`${category} does not exist.`, 400);
             }
         });
     }

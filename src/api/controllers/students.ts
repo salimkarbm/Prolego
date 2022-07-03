@@ -75,3 +75,17 @@ export const show = async (req: Request, res: Response, next: NextFunction) => {
     next(err);
   }
 };
+
+export const studentCategory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const category = req.query.gender as string;
+    const product = await store.studentByCategory(category);
+    res.status(200).json(product);
+  } catch (err) {
+    next(err);
+  }
+};

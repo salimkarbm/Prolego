@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.show = exports.index = exports.saveDataToDB = void 0;
+exports.studentCategory = exports.show = exports.index = exports.saveDataToDB = void 0;
 const csvtojsonConverter_1 = __importDefault(require("../../utils/csvtojsonConverter"));
 const appError_1 = __importDefault(require("../../utils/errors/appError"));
 const students_1 = __importDefault(require("../../models/students"));
@@ -83,3 +83,14 @@ const show = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.show = show;
+const studentCategory = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const category = req.query.gender;
+        const product = yield store.studentByCategory(category);
+        res.status(200).json(product);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.studentCategory = studentCategory;

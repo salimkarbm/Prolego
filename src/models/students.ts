@@ -40,5 +40,17 @@ class StudentInfoStore {
       throw new AppError(`unable find student with id ${id}.`, 400);
     }
   }
+
+  async studentByCategory(category: string): Promise<StudentInfo[]> {
+    try {
+      const sql = `SELECT * FROM students_info WHERE studentstatus='($1) OR gender =($1)'`;
+      const conn = await DB.client.connect();
+      const result = await conn.query(sql);
+      conn.release();
+      return result.rows;
+    } catch (err) {
+      throw new AppError(`${category} does not exist.`, 400);
+    }
+  }
 }
 export default StudentInfoStore;

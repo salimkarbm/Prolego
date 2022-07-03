@@ -7,7 +7,7 @@ import AuthService from '../../services/authentication';
 import UserStore from '../../models/user';
 import createSendToken from '../../utils/httpsCookie';
 import codeGenerator from '../../utils/codegenerator';
-import resetPasswordEmail from '../../utils/mailer';
+import sendEmail from '../../utils/mailer';
 
 // google client
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -123,31 +123,76 @@ export const googleAuth = async (
   }
 };
 
-export const forgotPasswordMail = async (
+export const forgotPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // get user base on  POSTED email
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(errors);
+  }
+  const { email } = req.body;
+  // check if user exist
+  const useremail = await authStore.checkEmail(email);
+  if (!useremail) {
+    return next(
+      new AppError('the user with the email address does not exist', 400)
+    );
+  }
+  // generate password reset token
+  const resetToken = codeGenerator(36) as string;
+  await authStore.passwordResetToken(email, resetToken);
+
+  // seed it to user's email
+  const resetUrl = `${req.protocol}://${req.get(
+    'host'
+  )}/api/v1/users/resetpassword/${resetToken}`;
+
+  const message = `<div><p></p>We are sending you this email because you requested for password reset. click on this link <a href="${resetUrl}">${resetUrl}</a> to create a new password.</p><p>if you didn't request for password reset, you can ignore this email.</p></p></div>`;
+  try {
+    const userInfo = {
+      email,
+      subject: 'Request to change your Password',
+      message,
+    };
+
+    await sendEmail(userInfo);
+    return res.status(200).json({
+      status: 'success',
+      message: 'Your password reset token was successfully sent to email',
+    });
+  } catch (err) {
+    next(
+      new AppError('There was an error sending email, try again later!.', 500)
+    );
+  }
+  next();
+};
+
+export const resetPassword = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const err = errors.array();
-    return next(err);
+    return next(errors);
   }
-  const { email } = req.body;
+  const token = String(req.params.token);
   try {
-    const foundemail = await authStore.checkEmail(email);
+    const user = await authStore.getUserByToken(token);
 
-    if (!foundemail) {
-      return next(new AppError('Fill in the right email', 400));
+    // if token has not expired, and there is user set the new password
+    if (user) {
+      await authStore.updatePassword(String(user.id), req.body.password);
+      // create jwt token and send to client
+      createSendToken(user, 200, req, res);
+    } else {
+      return next(new AppError('link is invalid', 404));
     }
-    const token = codeGenerator(36) as string;
-    const result = await authStore.forgotPassword(email, token);
-    await resetPasswordEmail(email, token);
-    return res.status(200).json({
-      message: 'Password Resent Email Sent Successfully',
-      data: result,
-    });
   } catch (err) {
-    return next(err);
+    next(err);
   }
 };

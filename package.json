@@ -43,7 +43,7 @@
     "google-auth-library": "^8.0.2",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.5",
-    "nodemailer": "^6.7.5",
+    "nodemailer": "^6.7.6",
     "pg": "^8.7.3"
   },
   "devDependencies": {

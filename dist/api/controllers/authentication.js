@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.forgotPasswordMail = exports.googleAuth = exports.authenticate = exports.create = void 0;
+exports.resetPassword = exports.forgotPassword = exports.googleAuth = exports.authenticate = exports.create = void 0;
 const google_auth_library_1 = require("google-auth-library");
 const express_validator_1 = require("express-validator");
 const appError_1 = __importDefault(require("../../utils/errors/appError"));
@@ -119,28 +119,62 @@ const googleAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.googleAuth = googleAuth;
-const forgotPasswordMail = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const forgotPassword = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    // get user base on  POSTED email
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        const err = errors.array();
-        return next(err);
+        return next(errors);
     }
     const { email } = req.body;
+    // check if user exist
+    const useremail = yield authStore.checkEmail(email);
+    if (!useremail) {
+        return next(new appError_1.default('the user with the email address does not exist', 400));
+    }
+    // generate password reset token
+    const resetToken = (0, codegenerator_1.default)(36);
+    yield authStore.passwordResetToken(email, resetToken);
+    // seed it to user's email
+    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/users/resetpassword/${resetToken}`;
+    const message = `<div><p></p>We are sending you this email because you requested for password reset. click on this link <a href="${resetUrl}">${resetUrl}</a> to create a new password.</p><p>if you didn't request for password reset, you can ignore this email.</p></p></div>`;
     try {
-        const foundemail = yield authStore.checkEmail(email);
-        if (!foundemail) {
-            return next(new appError_1.default('Fill in the right email', 400));
-        }
-        const token = (0, codegenerator_1.default)(36);
-        const result = yield authStore.forgotPassword(email, token);
-        yield (0, mailer_1.default)(email, token);
+        const userInfo = {
+            email,
+            subject: 'Request to change your Password',
+            message,
+        };
+        yield (0, mailer_1.default)(userInfo);
         return res.status(200).json({
-            message: 'Password Resent Email Sent Successfully',
-            data: result,
+            status: 'success',
+            message: 'Your password reset token was successfully sent to email',
         });
     }
     catch (err) {
-        return next(err);
+        next(new appError_1.default('There was an error sending email, try again later!.', 500));
+    }
+    next();
+});
+exports.forgotPassword = forgotPassword;
+const resetPassword = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        return next(errors);
+    }
+    const token = String(req.params);
+    try {
+        const user = yield authStore.getUserByToken(token);
+        // if token has not expired, and there is user set the new password
+        if (user) {
+            yield authStore.updatePassword(String(user.id), req.body.password);
+            // create jwt token and send to client
+            (0, httpsCookie_1.default)(user, 200, req, res);
+        }
+        else {
+            return next(new appError_1.default('link is invalid', 404));
+        }
+    }
+    catch (err) {
+        next(err);
     }
 });
-exports.forgotPasswordMail = forgotPasswordMail;
+exports.resetPassword = resetPassword;

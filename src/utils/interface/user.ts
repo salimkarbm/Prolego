@@ -28,3 +28,9 @@ export interface UpdateUser {
 export interface GoogleUser extends User {
   google_id: string;
 }
+
+export interface resetUser {
+  email: string;
+  subject: string;
+  message: string;
+}

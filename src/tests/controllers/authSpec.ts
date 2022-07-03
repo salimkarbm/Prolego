@@ -53,7 +53,6 @@ describe('Test users endpoints', () => {
   });
 
   it('/api/v1/users/forgotpassword endpoint should send a mail', async () => {
-    const request = supertest(server);
     const result = await request
       .post('/api/v1/users/forgotpassword')
       .set('Accept', 'application/json')

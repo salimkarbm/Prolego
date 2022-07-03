@@ -13,32 +13,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer_1 = __importDefault(require("nodemailer"));
-const appError_1 = __importDefault(require("./errors/appError"));
-const { MAIL_USER, MAIL_PASSWORD, SERVICE } = process.env;
-const transport = nodemailer_1.default.createTransport({
-    service: SERVICE,
-    port: 587,
-    secure: true,
-    auth: {
-        user: MAIL_USER,
-        pass: MAIL_PASSWORD,
-    },
+// import AppError from './errors/appError';
+const { EMAIL_USERNAME, EMAIL_HOST, EMAIL_PASSWORD, SERVICE_NAME } = process.env;
+const sendEmail = (options) => __awaiter(void 0, void 0, void 0, function* () {
+    // create a transporter
+    const transporter = nodemailer_1.default.createTransport({
+        service: SERVICE_NAME,
+        host: EMAIL_HOST,
+        port: 587,
+        auth: {
+            user: EMAIL_USERNAME,
+            pass: EMAIL_PASSWORD,
+        },
+    });
+    // define the email options
+    const mailOptions = {
+        from: 'Prolego<support@prolego.com>',
+        to: options.email,
+        subject: options.subject,
+        html: options.message,
+    };
+    // send the email with nodemailer
+    yield transporter.sendMail(mailOptions);
 });
-const resetPasswordEmail = (email, confirmationCode) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield transport.sendMail({
-            from: String(MAIL_USER),
-            to: email,
-            subject: 'Request to change your Password',
-            html: `
-          <div> <h1>Reset your Password</h1>
-          <p>We are sending you this email because you requested to change your password. kindly fill in this code at the redirected page.</p>
-          <h3>Code: <strong>${confirmationCode}</strong></h3>
-          </div>`,
-        });
-    }
-    catch (err) {
-        throw new appError_1.default(`${err}`, 400);
-    }
-});
-exports.default = resetPasswordEmail;
+exports.default = sendEmail;

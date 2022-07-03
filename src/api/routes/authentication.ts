@@ -4,7 +4,8 @@ import {
   create,
   authenticate,
   googleAuth,
-  forgotPasswordMail,
+  forgotPassword,
+  resetPassword,
 } from '../controllers/authentication';
 import verifyUser from '../../middlewares/authentication';
 
@@ -48,7 +49,15 @@ const authRoutes = (app: express.Application) => {
         .notEmpty()
         .isString(),
     ],
-    forgotPasswordMail
+    forgotPassword
+  );
+  app.patch(
+    '/api/v1/users/resetpassword/:token',
+    [
+      check('password').trim().escape().notEmpty().isString(),
+      check('confirmPassword').trim().escape().notEmpty().isString(),
+    ],
+    resetPassword
   );
 };
 

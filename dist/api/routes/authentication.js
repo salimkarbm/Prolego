@@ -34,6 +34,7 @@ const authRoutes = (app) => {
             .normalizeEmail()
             .notEmpty()
             .isString(),
-    ], authentication_1.forgotPasswordMail);
+    ], authentication_1.forgotPassword);
+    app.patch('/api/v1/users/resetpassword', [(0, express_validator_1.check)('password').trim().escape().notEmpty().isString()], authentication_1.resetPassword);
 };
 exports.default = authRoutes;
