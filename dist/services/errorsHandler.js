@@ -4,6 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const appError_1 = __importDefault(require("../utils/errors/appError"));
+const handleDuplicateFieldDB = (err) => {
+    const message = err.detail;
+    return new appError_1.default(message, 400);
+};
 const handleExpressValidatorError = (err) => {
     const errors = err.errors.map((el) => {
         const result = Object.values(el);
@@ -59,6 +63,9 @@ exports.default = (err, req, res, next) => {
             error = handleJWTExpiredError();
         if (error.errors instanceof Array) {
             error = handleExpressValidatorError(error);
+        }
+        if (error.code === 23505) {
+            error = handleDuplicateFieldDB(error);
         }
         sendErrorPro(error, res);
     }

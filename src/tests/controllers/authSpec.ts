@@ -3,6 +3,7 @@ import server from '../../server';
 
 describe('Test users endpoints', () => {
   let originalTimeout: number;
+  const request = supertest(server);
 
   beforeEach(function () {
     originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
@@ -14,7 +15,6 @@ describe('Test users endpoints', () => {
   });
 
   it('/api/v1/signup endpoint should create a user', async () => {
-    const request = supertest(server);
     const result = await request
       .post('/api/v1/signup')
       .set('Accept', 'application/json')
@@ -22,26 +22,24 @@ describe('Test users endpoints', () => {
         firstname: 'UserOne',
         lastname: 'User',
         email: 'user@example.com',
-        password: 'pass1',
+        password: 'pass1234',
       });
     expect(result.body.status).toEqual('success');
     expect(result.type).toEqual('application/json');
   });
   it('/api/v1/login endpoint should login the users', async () => {
-    const request = supertest(server);
     const result = await request
       .post('/api/v1/login')
       .set('Accept', 'application/json')
       .send({
         email: 'user@example.com',
-        password: 'pass112',
+        password: 'pass1234',
       });
     expect(result.body.status).toEqual('success');
     expect(result.type).toEqual('application/json');
     expect(result.body.token).toBeInstanceOf(String);
   });
   it('/api/v1/users-email endpoint should get users by email', async () => {
-    const request = supertest(server);
     const result = await request
       .get('/api/v1/users-email')
       .set('Accept', 'application/json')
@@ -55,7 +53,6 @@ describe('Test users endpoints', () => {
   });
 
   it('/api/v1/users/forgotpassword endpoint should send a mail', async () => {
-    const request = supertest(server);
     const result = await request
       .post('/api/v1/users/forgotpassword')
       .set('Accept', 'application/json')

@@ -12,28 +12,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const nodemailer_1 = __importDefault(require("nodemailer"));
-// import AppError from './errors/appError';
-const { EMAIL_USERNAME, EMAIL_HOST, EMAIL_PASSWORD, SERVICE_NAME } = process.env;
-const sendEmail = (options) => __awaiter(void 0, void 0, void 0, function* () {
-    // create a transporter
-    const transporter = nodemailer_1.default.createTransport({
-        service: SERVICE_NAME,
-        host: EMAIL_HOST,
-        port: 587,
-        auth: {
-            user: EMAIL_USERNAME,
-            pass: EMAIL_PASSWORD,
-        },
-    });
-    // define the email options
-    const mailOptions = {
-        from: 'Prolego<support@prolego.com>',
-        to: options.email,
-        subject: options.subject,
-        html: options.message,
-    };
-    // send the email with nodemailer
-    yield transporter.sendMail(mailOptions);
+const csvtojson_1 = __importDefault(require("csvtojson"));
+const path_1 = __importDefault(require("path"));
+const appError_1 = __importDefault(require("./errors/appError"));
+// import StudentInfo from './interface/studentInfo';
+const cwd = process.cwd();
+const csvFilePath = path_1.default.join(`${cwd}/data/studentsInfo.csv`);
+const fileConverter = () => __awaiter(void 0, void 0, void 0, function* () {
+    if (!csvFilePath) {
+        return new appError_1.default('cannot find path to file', 404);
+    }
+    if (!(path_1.default.extname(csvFilePath) === '.csv')) {
+        return new appError_1.default('this is not a valid CSV file', 400);
+    }
+    const convertedFile = yield (0, csvtojson_1.default)().fromFile(csvFilePath);
+    const data = convertedFile.slice(0, 20);
+    return data;
 });
-exports.default = sendEmail;
+exports.default = fileConverter;
