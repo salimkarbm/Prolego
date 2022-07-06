@@ -103,5 +103,5 @@ typings/
 # TernJS port file
 .tern-port
 
-views
 package-lock.json
+views

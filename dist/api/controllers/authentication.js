@@ -160,7 +160,7 @@ const resetPassword = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     if (!errors.isEmpty()) {
         return next(errors);
     }
-    const token = String(req.params);
+    const token = String(req.params.token);
     try {
         const user = yield authStore.getUserByToken(token);
         // if token has not expired, and there is user set the new password

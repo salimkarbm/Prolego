@@ -15,12 +15,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const compression_1 = __importDefault(require("compression"));
+const path_1 = __importDefault(require("path"));
 const cors_1 = __importDefault(require("cors"));
+const express_fileupload_1 = __importDefault(require("express-fileupload"));
 const errorsHandler_1 = __importDefault(require("./services/errorsHandler"));
 const appError_1 = __importDefault(require("./utils/errors/appError"));
 const authentication_1 = __importDefault(require("./api/routes/authentication"));
 const user_1 = __importDefault(require("./api/routes/user"));
 const students_1 = __importDefault(require("./api/routes/students"));
+const cwd = process.cwd();
 process.on('uncaughtException', (err) => {
     console.log(err.name, err.message);
     console.log('UNCAUGHT EXCEPTION! shutting down...');
@@ -44,12 +47,17 @@ app.use((0, cors_1.default)());
 // Body parser middleware
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
+app.use((0, express_fileupload_1.default)({
+    useTempFiles: true,
+    tempFileDir: path_1.default.join(cwd, 'temp'),
+    createParentPath: true,
+}));
 // Define index route
 app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send("<h3 style=background:black;padding:6em;color:white><center>Welcome To Prolego. Your World Of High-Performance Awaits, We’re so glad you’re here! You are now part of a growing community of professionals contributing to the reduction of academic dropout and failure by predicting student's academic performance across the globe via Prolego Whether you’ve come to create something of your own or for your company, we’ve got something for you. Let’s go!.</center></h3>");
 }));
-// app.get('/login', async (req: Request, res: Response) => {
-//   res.render('login');
+// app.get('/upload', async (req: Request, res: Response) => {
+//   res.render('index');
 // });
 // Routes
 (0, user_1.default)(app);

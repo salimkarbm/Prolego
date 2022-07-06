@@ -1,12 +1,16 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import compression from 'compression';
+import path from 'path';
 import cors from 'cors';
+import fileUpload from 'express-fileupload';
 import errorHandler from './services/errorsHandler';
 import AppError from './utils/errors/appError';
 import authRoutes from './api/routes/authentication';
 import userRoutes from './api/routes/user';
 import studentInfoRoutes from './api/routes/students';
+
+const cwd = process.cwd();
 
 process.on('uncaughtException', (err) => {
   console.log(err.name, err.message);
@@ -40,6 +44,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: path.join(cwd, 'temp'),
+    createParentPath: true,
+  })
+);
+
 // Define index route
 app.get('/', async (req: Request, res: Response) => {
   res.send(
@@ -47,8 +59,8 @@ app.get('/', async (req: Request, res: Response) => {
   );
 });
 
-// app.get('/login', async (req: Request, res: Response) => {
-//   res.render('login');
+// app.get('/upload', async (req: Request, res: Response) => {
+//   res.render('index');
 // });
 
 // Routes
