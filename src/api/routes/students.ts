@@ -1,17 +1,17 @@
 import express from 'express';
 
 import {
-  saveDataToDB,
+  upload,
   index,
   show,
-  studentCategory,
+  studentByCategory,
 } from '../controllers/students';
 
 const studentInfoRoutes = (app: express.Application) => {
-  app.post('/api/v1/students', saveDataToDB);
+  app.post('/api/v1/upload', upload);
   app.get('/api/v1/students', index);
-  app.get('/api/v1/students/:field', show);
-  app.get('/api/v1/students-category', studentCategory);
+  app.get('/api/v1/students/:id', show);
+  app.get('/api/v1/studentscategory', studentByCategory);
 };
 
 export default studentInfoRoutes;

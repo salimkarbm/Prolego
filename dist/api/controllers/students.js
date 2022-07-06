@@ -12,27 +12,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.studentCategory = exports.show = exports.index = exports.saveDataToDB = void 0;
+exports.studentByCategory = exports.show = exports.index = exports.upload = void 0;
+const path_1 = __importDefault(require("path"));
 const csvtojsonConverter_1 = __importDefault(require("../../utils/csvtojsonConverter"));
 const appError_1 = __importDefault(require("../../utils/errors/appError"));
 const students_1 = __importDefault(require("../../models/students"));
+const cwd = process.cwd();
 const store = new students_1.default();
-const saveDataToDB = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const upload = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        let studentObj;
-        const studentData = yield (0, csvtojsonConverter_1.default)();
+        const file = (_a = req.files) === null || _a === void 0 ? void 0 : _a.mFile;
+        const saveFilePath = path_1.default.join(cwd, 'data', 'upload', file.name);
+        yield file.mv(saveFilePath);
+        const studentData = yield (0, csvtojsonConverter_1.default)(saveFilePath);
         if (studentData instanceof Array) {
+            let studentObj;
             // eslint-disable-next-line no-restricted-syntax
             for (const student of studentData) {
                 studentObj = {
-                    field: student.field1,
                     firstName: student.firstname,
                     lastName: student.lastname,
                     course: student.Course,
                     attendance: student.Attendance,
                     gender: student.Gender,
                     ageAtEnrollment: student.Age_at_Enroll,
-                    nationality: student.Nationality,
+                    region: student.Region,
                     maritalStatus: student.Marital_Status,
                     prevQualification: student.Prev_Qua,
                     prevQualificationGrade: student.Prev_Qua_Grade,
@@ -42,29 +47,35 @@ const saveDataToDB = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
                     admissionGrade: student.Adm_Grade,
                     schorlarship: student.S_Holder,
                     firstSemesterCreditUnit: student.Cur_U_1st_Sem_Credit,
-                    firstSemesterApproved: student.Cur_U_1st_Sem_Appr,
                     firstSemesterGrade: student.Cur_U_1st_Sem_Grade,
                     secondSemesterCreditUnit: student.Cur_U_2nd_Sem_Credit,
-                    secondSemesterApproved: student.Cur_U_2nd_Sem_Approved,
                     secondSemesterGrade: student.Cur_U_2nd_Sem_Grade,
                 };
                 // eslint-disable-next-line no-await-in-loop
                 yield store.saveStudentData(studentObj);
             }
+            res
+                .status(200)
+                .json({ status: 'success', message: 'file uploaded successfully' });
         }
     }
     catch (err) {
         return next(err);
     }
 });
-exports.saveDataToDB = saveDataToDB;
+exports.upload = upload;
 const index = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const students = yield store.index();
         if (!students) {
             return next(new appError_1.default('Unable to fetch students from database', 404));
         }
-        res.status(200).json(students);
+        res.status(200).json({
+            status: 'success',
+            data: {
+                students,
+            },
+        });
     }
     catch (err) {
         return next(err);
@@ -73,24 +84,34 @@ const index = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
 exports.index = index;
 const show = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const student = yield store.show(req.params.field);
+        const student = yield store.show(req.params.id);
         if (!student)
             return next(new appError_1.default('student not found', 404));
-        res.status(200).json(student);
+        res.status(200).json({
+            status: 'success',
+            data: {
+                student,
+            },
+        });
     }
     catch (err) {
         next(err);
     }
 });
 exports.show = show;
-const studentCategory = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const studentByCategory = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const category = req.query.gender;
-        const product = yield store.studentByCategory(category);
-        res.status(200).json(product);
+        const status = req.query.category;
+        const category = yield store.studentCategory(status);
+        res.status(200).json({
+            status: 'success',
+            data: {
+                category,
+            },
+        });
     }
     catch (err) {
         next(err);
     }
 });
-exports.studentCategory = studentCategory;
+exports.studentByCategory = studentByCategory;

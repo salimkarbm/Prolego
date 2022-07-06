@@ -35,6 +35,9 @@ const authRoutes = (app) => {
             .notEmpty()
             .isString(),
     ], authentication_1.forgotPassword);
-    app.patch('/api/v1/users/resetpassword', [(0, express_validator_1.check)('password').trim().escape().notEmpty().isString()], authentication_1.resetPassword);
+    app.patch('/api/v1/users/resetpassword/:token', [
+        (0, express_validator_1.check)('password').trim().escape().notEmpty().isString(),
+        (0, express_validator_1.check)('confirmPassword').trim().escape().notEmpty().isString(),
+    ], authentication_1.resetPassword);
 };
 exports.default = authRoutes;

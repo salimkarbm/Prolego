@@ -16,14 +16,12 @@ const csvtojson_1 = __importDefault(require("csvtojson"));
 const path_1 = __importDefault(require("path"));
 const appError_1 = __importDefault(require("./errors/appError"));
 // import StudentInfo from './interface/studentInfo';
-const cwd = process.cwd();
-const csvFilePath = path_1.default.join(`${cwd}/data/studentsInfo.csv`);
-const fileConverter = () => __awaiter(void 0, void 0, void 0, function* () {
+const fileConverter = (csvFilePath) => __awaiter(void 0, void 0, void 0, function* () {
     if (!csvFilePath) {
         return new appError_1.default('cannot find path to file', 404);
     }
     if (!(path_1.default.extname(csvFilePath) === '.csv')) {
-        return new appError_1.default('this is not a valid CSV file', 400);
+        return new appError_1.default('Please provide a CSV file', 400);
     }
     const convertedFile = yield (0, csvtojson_1.default)().fromFile(csvFilePath);
     const data = convertedFile.slice(0, 20);

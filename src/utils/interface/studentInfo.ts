@@ -1,12 +1,11 @@
 interface StudentInfo {
-  field: number;
   firstName?: string;
   lastName?: string;
   course: number;
   attendance: number;
   gender: number;
   ageAtEnrollment: number;
-  nationality: number;
+  region: number;
   maritalStatus: number;
   prevQualification: number;
   prevQualificationGrade: number;
@@ -16,10 +15,8 @@ interface StudentInfo {
   admissionGrade: number;
   schorlarship: number;
   firstSemesterCreditUnit: number;
-  firstSemesterApproved: number;
   firstSemesterGrade: number;
   secondSemesterCreditUnit: number;
-  secondSemesterApproved: number;
   secondSemesterGrade: number;
   studentStatus?: string;
   createdAt?: string;

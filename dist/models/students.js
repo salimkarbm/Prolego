@@ -19,7 +19,7 @@ class StudentInfoStore {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();
-                const sql = `INSERT INTO students_info (field,firstName,lastName,course,attendance,gender,ageAtEnrollment,nationality,maritalStatus,prevQualification,prevQualificationGrade,  motherQualification,tuitionFee,fatherQualification,admissionGrade,schorlarship,firstSemesterCreditUnit,firstSemesterApproved,firstSemesterGrade,secondSemesterCreditUnit,secondSemesterApproved, secondSemesterGrade) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21,$22) RETURNING *`;
+                const sql = `INSERT INTO students_info (firstName,lastName,course,attendance,gender,ageAtEnrollment,region,maritalStatus,prevQualification,prevQualificationGrade,motherQualification,tuitionFee,fatherQualification,admissionGrade,schorlarship,firstSemesterCreditUnit,firstSemesterGrade,secondSemesterCreditUnit,secondSemesterGrade) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19 ) RETURNING *`;
                 const data = Object.values(studenData);
                 const res = yield conn.query(sql, data);
                 conn.release();
@@ -47,7 +47,7 @@ class StudentInfoStore {
     show(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `SELECT * FROM students_info WHERE field=($1)`;
+                const sql = `SELECT * FROM students_info WHERE id=($1)`;
                 const conn = yield database_1.default.client.connect();
                 const result = yield conn.query(sql, [id]);
                 const student = result.rows[0];
@@ -59,17 +59,17 @@ class StudentInfoStore {
             }
         });
     }
-    studentByCategory(category) {
+    studentCategory(status) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `SELECT * FROM students_info WHERE studentstatus='($1) OR gender =($1)'`;
+                const sql = `SELECT * FROM students_info WHERE students_info.studentstatus=($1) OR students_info.gender=($1) OR students_info.maritalstatus=($1) OR students_info.region=($1) OR students_info.schorlarship=($1) `;
                 const conn = yield database_1.default.client.connect();
-                const result = yield conn.query(sql);
+                const result = yield conn.query(sql, [status]);
                 conn.release();
                 return result.rows;
             }
             catch (err) {
-                throw new appError_1.default(`${category} does not exist.`, 400);
+                throw new appError_1.default(`${status} does not exist.`, 400);
             }
         });
     }
