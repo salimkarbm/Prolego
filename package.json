@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/salimkarbm/Prolego#readme",
   "dependencies": {
+    "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
     "compression": "^1.7.4",
     "cors": "^2.8.5",

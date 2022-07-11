@@ -3,7 +3,7 @@ import { UploadedFile } from 'express-fileupload';
 import path from 'path';
 import fileConverter from '../../utils/csvtojsonConverter';
 import AppError from '../../utils/errors/appError';
-import StudentInfo from '../../utils/interface/studentInfo';
+import { StudentInfo } from '../../utils/interface/studentInfo';
 import StudentInfoStore from '../../models/students';
 
 const cwd = process.cwd();
@@ -25,25 +25,25 @@ export const upload = async (
       // eslint-disable-next-line no-restricted-syntax
       for (const student of studentData) {
         studentObj = {
-          firstName: student.firstname,
-          lastName: student.lastname,
+          firstname: student.firstname,
+          lastname: student.lastname,
           course: student.Course,
           attendance: student.Attendance,
           gender: student.Gender,
-          ageAtEnrollment: student.Age_at_Enroll,
+          ageatenrollment: student.Age_at_Enroll,
           region: student.Region,
-          maritalStatus: student.Marital_Status,
-          prevQualification: student.Prev_Qua,
-          prevQualificationGrade: student.Prev_Qua_Grade,
-          motherQualification: student.Mother_Qua,
-          tuitionFee: student.Tui_Up_to_Date,
-          fatherQualification: student.Father_Qua,
-          admissionGrade: student.Adm_Grade,
+          maritalstatus: student.Marital_Status,
+          prevqualification: student.Prev_Qua,
+          prevqualificationgrade: student.Prev_Qua_Grade,
+          motherqualification: student.Mother_Qua,
+          tuitionfee: student.Tui_Up_to_Date,
+          fatherqualification: student.Father_Qua,
+          admissiongrade: student.Adm_Grade,
           schorlarship: student.S_Holder,
-          firstSemesterCreditUnit: student.Cur_U_1st_Sem_Credit,
-          firstSemesterGrade: student.Cur_U_1st_Sem_Grade,
-          secondSemesterCreditUnit: student.Cur_U_2nd_Sem_Credit,
-          secondSemesterGrade: student.Cur_U_2nd_Sem_Grade,
+          firstsemestercreditunit: student.Cur_U_1st_Sem_Credit,
+          firstsemestergrade: student.Cur_U_1st_Sem_Grade,
+          secondsemestercreditunit: student.Cur_U_2nd_Sem_Credit,
+          secondsemestergrade: student.Cur_U_2nd_Sem_Grade,
         };
         // eslint-disable-next-line no-await-in-loop
         await store.saveStudentData(studentObj);
@@ -69,6 +69,7 @@ export const index = async (
     }
     res.status(200).json({
       status: 'success',
+      result: students.length,
       data: {
         students,
       },
@@ -103,6 +104,7 @@ export const studentByCategory = async (
     const category = await store.studentCategory(status);
     res.status(200).json({
       status: 'success',
+      result: category.length,
       data: {
         category,
       },

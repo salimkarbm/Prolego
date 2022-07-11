@@ -75,6 +75,7 @@ export const index = async (req: Request, res: Response) => {
     });
     res.status(200).json({
       status: 'success',
+      result: allUser.length,
       data: {
         allUser,
       },

@@ -14,64 +14,66 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../config/database"));
 const appError_1 = __importDefault(require("../utils/errors/appError"));
-class StudentInfoStore {
-    saveStudentData(studenData) {
+class DashboardService {
+    PredictStudentStatus(status, id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const sql = `UPDATE students_info SET studentstatus='${status}' WHERE id='${id}' RETURNING *`;
                 const conn = yield database_1.default.client.connect();
-                const sql = `INSERT INTO students_info (firstName,lastName,course,attendance,gender,ageAtEnrollment,region,maritalStatus,prevQualification,prevQualificationGrade,motherQualification,tuitionFee,fatherQualification,admissionGrade,schorlarship,firstSemesterCreditUnit,firstSemesterGrade,secondSemesterCreditUnit,secondSemesterGrade) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING *`;
-                const data = Object.values(studenData);
-                const res = yield conn.query(sql, data);
+                const result = yield conn.query(sql);
                 conn.release();
-                return res.rows;
+                const student = result.rows[0];
+                return student;
             }
             catch (err) {
-                throw new appError_1.default(`Unable to create student.`, 400);
+                throw new appError_1.default(`unable to update ${status}.`, 400);
             }
         });
     }
-    index() {
+    notPredictedStudent() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();
-                const sql = 'SELECT * FROM students_info';
+                const sql = `SELECT * FROM students_info WHERE studentstatus IS NULL`;
                 const result = yield conn.query(sql);
                 conn.release();
-                return result.rows;
+                const res = result.rows;
+                return res;
             }
             catch (err) {
                 throw new appError_1.default(`Unable to fetch students from Database.`, 400);
             }
         });
     }
-    show(id) {
+    predictedStudent(id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `SELECT * FROM students_info WHERE id=($1)`;
                 const conn = yield database_1.default.client.connect();
+                const sql = `SELECT * FROM students_info WHERE id =($1)`;
                 const result = yield conn.query(sql, [id]);
-                const student = result.rows[0];
                 conn.release();
-                return student;
+                const res = result.rows[0];
+                return res;
             }
             catch (err) {
-                throw new appError_1.default(`unable find student with id ${id}.`, 400);
+                throw new appError_1.default(`Unable to fetch students from Database.`, 400);
             }
         });
     }
-    studentCategory(status) {
+    studentAttendance(date) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `SELECT * FROM students_info WHERE students_info.studentstatus=($1) OR students_info.gender=($1) OR students_info.maritalstatus=($1) OR students_info.region=($1) OR students_info.schorlarship=($1) `;
+                const sql = `SELECT * FROM students_info WHERE  date = '${date}'`;
                 const conn = yield database_1.default.client.connect();
-                const result = yield conn.query(sql, [status]);
+                const result = yield conn.query(sql);
                 conn.release();
-                return result.rows;
+                const student = result.rows;
+                return student;
             }
             catch (err) {
-                throw new appError_1.default(`${status} does not exist.`, 400);
+                throw new appError_1.default(`there is no attendance for Day:${date}.`, 400);
             }
         });
     }
 }
-exports.default = StudentInfoStore;
+exports.default = DashboardService;

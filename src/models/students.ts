@@ -1,12 +1,12 @@
 import DB from '../config/database';
-import StudentInfo from '../utils/interface/studentInfo';
+import { StudentInfo } from '../utils/interface/studentInfo';
 import AppError from '../utils/errors/appError';
 
 class StudentInfoStore {
   async saveStudentData(studenData: StudentInfo): Promise<StudentInfo[]> {
     try {
       const conn = await DB.client.connect();
-      const sql = `INSERT INTO students_info (firstName,lastName,course,attendance,gender,ageAtEnrollment,region,maritalStatus,prevQualification,prevQualificationGrade,motherQualification,tuitionFee,fatherQualification,admissionGrade,schorlarship,firstSemesterCreditUnit,firstSemesterGrade,secondSemesterCreditUnit,secondSemesterGrade) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19 ) RETURNING *`;
+      const sql = `INSERT INTO students_info (firstName,lastName,course,attendance,gender,ageAtEnrollment,region,maritalStatus,prevQualification,prevQualificationGrade,motherQualification,tuitionFee,fatherQualification,admissionGrade,schorlarship,firstSemesterCreditUnit,firstSemesterGrade,secondSemesterCreditUnit,secondSemesterGrade) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING *`;
       const data = Object.values(studenData);
       const res = await conn.query(sql, data);
       conn.release();
