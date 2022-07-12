@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import axios from 'axios';
 import DashboardService from '../../services/dashboard';
-import AppError from '../../utils/errors/appError';
+// import AppError from '../../utils/errors/appError';
 import {
   course,
   fatherQua,
@@ -118,6 +118,38 @@ export const predictStudentById = async (
     next(err);
   }
 };
+export const predictionSummary = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const totalNumberOfStudents = await store.totalStudents();
+  const graduates = await store.graduate();
+  const dropouts = await store.dropout();
+  try {
+    const dropoutStudents =
+      (((dropouts.count as number) / totalNumberOfStudents.count) as number) *
+      100;
+    const graduatedStudents =
+      (((graduates.count as number) / totalNumberOfStudents.count) as number) *
+      100;
+
+    const totalStudents = parseInt(totalNumberOfStudents.count, 10);
+    const totalDropoutStudents = `${dropoutStudents}%`;
+    const totalgraduatedStudents = `${graduatedStudents}%`;
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        totalStudents,
+        totalDropoutStudents,
+        totalgraduatedStudents,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
 export const attendance = async (
   req: Request,
@@ -125,13 +157,24 @@ export const attendance = async (
   next: NextFunction
 ) => {
   const { date } = req.query;
+  const totalAttendanceByDay = await store.studentAttendance(date as string);
+  const absent = await store.absentAttendance(date as string);
+  const present = await store.presentAttendance(date as string);
   try {
-    const day = await store.studentAttendance(date as string);
-    if (!day) return next(new AppError('attendance not found', 404));
+    const studentAbsent =
+      (((absent.count as number) / totalAttendanceByDay.count) as number) * 100;
+    const studentPresent =
+      (((present.count as number) / totalAttendanceByDay.count) as number) *
+      100;
+
+    const percentageOfStudentAbsent = `${studentAbsent}%`;
+    const percentageOfStudentPresent = `${studentPresent}%`;
+
     res.status(200).json({
       status: 'success',
       data: {
-        day,
+        percentageOfStudentAbsent,
+        percentageOfStudentPresent,
       },
     });
   } catch (err) {

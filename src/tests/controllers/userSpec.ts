@@ -31,7 +31,6 @@ describe('User Handler', () => {
 
   it('should return all users', async () => {
     const response = await request.get('/api/v1/users');
-    console.log(response);
     expect(response.status).toBe(200);
     expect(response.body).toBeTruthy();
   });
