@@ -34,7 +34,7 @@ class StudentInfoStore {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();
-                const sql = 'SELECT * FROM students_info';
+                const sql = 'SELECT * FROM students_info LIMIT 100 ';
                 const result = yield conn.query(sql);
                 conn.release();
                 return result.rows;

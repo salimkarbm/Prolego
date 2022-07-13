@@ -55,7 +55,7 @@ app.use((0, express_fileupload_1.default)({
 }));
 // Define index route
 app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send("<h3 style=background:black;padding:6em;color:white><center>Welcome To Prolego. Your World Of High-Performance Awaits, We’re so glad you’re here! You are now part of a growing community of professionals contributing to the reduction of academic dropout and failure by predicting student's academic performance across the globe via Prolego Whether you’ve come to create something of your own or for your company, we’ve got something for you. Let’s go!.</center></h3>");
+    res.send("<section style=background:#104DB2;padding:6em;color:white;font-size:20px;><center><h2>Welcome To Prolego!</h2>A platform that takes into consideration the academic excellence of students. We’re so glad you’re here! You are now part of a growing community of professionals contributing to the reduction of academic dropout and failure by predicting student's academic performance across the globe via Prolego Whether you’ve come to create something of your own or for your company, we’ve got something for you. Let’s go!.</center><p style=font-size:22px;><a href='https://documenter.getpostman.com/view/11215567/UzBmM7GL#0ed2871f-3d6c-47c4-8a9f-2fba0e10a374'style=color:white;font-size:22px;>Click here<a/> for Documentation</p></section>");
 }));
 // app.get('/upload', async (req: Request, res: Response) => {
 //   res.render('index');

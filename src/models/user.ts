@@ -40,6 +40,22 @@ class UserStore {
       throw new AppError(`unable to fetch users from database`, 500);
     }
   }
+
+  async update(id: number, password: string): Promise<User> {
+    try {
+      const sql = `UPDATE users SET password_digest=($1) WHERE id=${id} RETURNING *`;
+      const conn = await DB.client.connect();
+      const result = await conn.query(sql, [password]);
+      conn.release();
+      const user = result.rows[0];
+      return user;
+    } catch (err) {
+      throw new AppError(
+        `Unable to update user with password:${password}.`,
+        500
+      );
+    }
+  }
 }
 
 export default UserStore;

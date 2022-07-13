@@ -19,7 +19,7 @@ class StudentInfoStore {
   async index(): Promise<StudentInfo[]> {
     try {
       const conn = await DB.client.connect();
-      const sql = 'SELECT * FROM students_info';
+      const sql = 'SELECT * FROM students_info LIMIT 100 ';
       const result = await conn.query(sql);
       conn.release();
       return result.rows;

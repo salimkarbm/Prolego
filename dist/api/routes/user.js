@@ -9,6 +9,7 @@ const authentication_1 = __importDefault(require("../../middlewares/authenticati
 const userRoutes = (app) => {
     app.get('/api/v1/users', users_1.index);
     app.get('/api/v1/users/:id', authentication_1.default, users_1.getUserById);
+    app.patch('/api/v1/users/changedmypassword', (0, express_validator_1.check)('password').isLength({ min: 8 }).trim().escape().notEmpty(), authentication_1.default, users_1.changedPassword);
     app.get('/api/v1/users-email', (0, express_validator_1.check)('email')
         .isEmail()
         .trim()

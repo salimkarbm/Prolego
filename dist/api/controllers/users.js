@@ -12,9 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.index = exports.getUserByEmail = exports.getUserById = void 0;
+exports.changedPassword = exports.index = exports.getUserByEmail = exports.getUserById = void 0;
+const express_validator_1 = require("express-validator");
 const user_1 = __importDefault(require("../../models/user"));
 const appError_1 = __importDefault(require("../../utils/errors/appError"));
+const httpsCookie_1 = __importDefault(require("../../utils/httpsCookie"));
 const store = new user_1.default();
 const getUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -40,6 +42,10 @@ const getUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.getUserById = getUserById;
 const getUserByEmail = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        return next(errors);
+    }
     try {
         const email = req.body.email;
         const user = yield store.getUserByEmail(email);
@@ -81,6 +87,7 @@ const index = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
         res.status(200).json({
             status: 'success',
+            result: allUser.length,
             data: {
                 allUser,
             },
@@ -91,3 +98,20 @@ const index = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.index = index;
+const changedPassword = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        return next(errors);
+    }
+    try {
+        // Get user from collection
+        const user = yield store.getUserById(req.user.id);
+        const updatedUser = yield store.update(user.id, req.body.password);
+        console.log(updatedUser);
+        (0, httpsCookie_1.default)(updatedUser, 200, req, res);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.changedPassword = changedPassword;

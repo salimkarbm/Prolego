@@ -40,7 +40,6 @@ describe('User Handler', () => {
     });
     it('should return all users', () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield request.get('/api/v1/users');
-        console.log(response);
         expect(response.status).toBe(200);
         expect(response.body).toBeTruthy();
     }));

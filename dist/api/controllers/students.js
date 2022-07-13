@@ -72,6 +72,7 @@ const index = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
         }
         res.status(200).json({
             status: 'success',
+            result: students.length,
             data: {
                 students,
             },
@@ -105,6 +106,7 @@ const studentByCategory = (req, res, next) => __awaiter(void 0, void 0, void 0, 
         const category = yield store.studentCategory(status);
         res.status(200).json({
             status: 'success',
+            result: category.length,
             data: {
                 category,
             },
