@@ -118,6 +118,7 @@ export const predictStudentById = async (
     next(err);
   }
 };
+
 export const predictionSummary = async (
   req: Request,
   res: Response,
@@ -175,6 +176,64 @@ export const attendance = async (
       data: {
         percentageOfStudentAbsent,
         percentageOfStudentPresent,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const top5students = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const top5student = await store.top5students();
+    res.status(200).json({
+      status: 'success',
+      results: top5student.length,
+      data: {
+        top5student,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const top5studentsbycourse = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const dept = req.query.course;
+    const top5student = await store.top5studentsBycourse(dept as string);
+    res.status(200).json({
+      status: 'success',
+      results: top5student.length,
+      data: {
+        top5student,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const courses = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const availableCourses = await store.availableCourses();
+    res.status(200).json({
+      status: 'success',
+      results: availableCourses.length,
+      data: {
+        availableCourses,
       },
     });
   } catch (err) {

@@ -119,6 +119,43 @@ class DashboardService {
       throw new AppError(`there is no attendance for Day:${date}.`, 400);
     }
   }
+
+  async top5students() {
+    try {
+      const conn = await DB.client.connect();
+      const sql = `SELECT firstsemestergrade,secondsemestergrade, firstname, lastname, (students_info.firstsemestergrade + students_info.secondsemestergrade) AS totalgrade FROM students_info ORDER BY totalgrade DESC LIMIT 5`;
+      const result = await conn.query(sql);
+      conn.release();
+      return result.rows;
+    } catch (err) {
+      throw new AppError(`unable get top 5 students`, 400);
+    }
+  }
+
+  async top5studentsBycourse(course: string) {
+    try {
+      const conn = await DB.client.connect();
+      const sql = `SELECT firstsemestergrade,secondsemestergrade, firstname, lastname, (students_info.firstsemestergrade + students_info.secondsemestergrade) AS totalgrade FROM students_info WHERE students_info.course=($1) ORDER BY totalgrade DESC LIMIT 5`;
+      const result = await conn.query(sql, [course]);
+      conn.release();
+      return result.rows;
+    } catch (err) {
+      throw new AppError(`unable get top 5 students`, 400);
+    }
+  }
+
+  async availableCourses() {
+    try {
+      const conn = await DB.client.connect();
+      const sql = `SELECT DISTINCT course FROM students_info `;
+      const result = await conn.query(sql);
+      conn.release();
+      const res = result.rows;
+      return res;
+    } catch (err) {
+      throw new AppError(`Unable to fetch course from Database.`, 400);
+    }
+  }
 }
 
 export default DashboardService;

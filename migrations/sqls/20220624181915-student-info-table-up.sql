@@ -17,9 +17,9 @@ CREATE TABLE students_info (
   admissionGrade varchar(50) NOT NULL,
   schorlarship varchar(50) NOT NULL,
   firstSemesterCreditUnit varchar(50) NOT NULL,
-  firstSemesterGrade varchar(50) NOT NULL,
+  firstSemesterGrade DOUBLE PRECISION NOT NULL,
   secondSemesterCreditUnit varchar(50) NOT NULL,
-  secondSemesterGrade varchar(50) NOT NULL,
+  secondSemesterGrade DOUBLE PRECISION NOT NULL,
   studentStatus varchar(50),
   createdAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP);
   
