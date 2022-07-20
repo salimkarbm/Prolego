@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.attendance = exports.predictionSummary = exports.predictStudentById = exports.predict = void 0;
+exports.courses = exports.top5studentsbycourse = exports.top5students = exports.attendance = exports.predictionSummary = exports.predictStudentById = exports.predict = void 0;
 const axios_1 = __importDefault(require("axios"));
 const dashboard_1 = __importDefault(require("../../services/dashboard"));
 // import AppError from '../../utils/errors/appError';
@@ -126,3 +126,52 @@ const attendance = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.attendance = attendance;
+const top5students = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const top5student = yield store.top5students();
+        res.status(200).json({
+            status: 'success',
+            results: top5student.length,
+            data: {
+                top5student,
+            },
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.top5students = top5students;
+const top5studentsbycourse = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const dept = req.query.course;
+        const top5student = yield store.top5studentsBycourse(dept);
+        res.status(200).json({
+            status: 'success',
+            results: top5student.length,
+            data: {
+                top5student,
+            },
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.top5studentsbycourse = top5studentsbycourse;
+const courses = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const availableCourses = yield store.availableCourses();
+        res.status(200).json({
+            status: 'success',
+            results: availableCourses.length,
+            data: {
+                availableCourses,
+            },
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.courses = courses;

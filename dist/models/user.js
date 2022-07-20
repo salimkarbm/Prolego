@@ -62,9 +62,9 @@ class UserStore {
     update(id, password) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `UPDATE users SET password_digest='${password}' WHERE id='${id}' RETURNING *`;
+                const sql = `UPDATE users SET password_digest=($1) WHERE id=${id} RETURNING *`;
                 const conn = yield database_1.default.client.connect();
-                const result = yield conn.query(sql, [id, password]);
+                const result = yield conn.query(sql, [password]);
                 conn.release();
                 const user = result.rows[0];
                 return user;

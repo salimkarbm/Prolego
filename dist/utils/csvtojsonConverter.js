@@ -24,7 +24,7 @@ const fileConverter = (csvFilePath) => __awaiter(void 0, void 0, void 0, functio
         return new appError_1.default('Please provide a CSV file', 400);
     }
     const convertedFile = yield (0, csvtojson_1.default)().fromFile(csvFilePath);
-    const data = convertedFile.slice(0, 20);
+    const data = convertedFile.slice(0, 100);
     return data;
 });
 exports.default = fileConverter;

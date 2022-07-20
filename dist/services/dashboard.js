@@ -150,5 +150,48 @@ class DashboardService {
             }
         });
     }
+    top5students() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const conn = yield database_1.default.client.connect();
+                const sql = `SELECT firstsemestergrade,secondsemestergrade, firstname, lastname, (students_info.firstsemestergrade + students_info.secondsemestergrade) AS totalgrade FROM students_info ORDER BY totalgrade DESC LIMIT 5`;
+                const result = yield conn.query(sql);
+                conn.release();
+                return result.rows;
+            }
+            catch (err) {
+                throw new appError_1.default(`unable get top 5 students`, 400);
+            }
+        });
+    }
+    top5studentsBycourse(course) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const conn = yield database_1.default.client.connect();
+                const sql = `SELECT firstsemestergrade,secondsemestergrade, firstname, lastname, (students_info.firstsemestergrade + students_info.secondsemestergrade) AS totalgrade FROM students_info WHERE students_info.course=($1) ORDER BY totalgrade DESC LIMIT 5`;
+                const result = yield conn.query(sql, [course]);
+                conn.release();
+                return result.rows;
+            }
+            catch (err) {
+                throw new appError_1.default(`unable get top 5 students`, 400);
+            }
+        });
+    }
+    availableCourses() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const conn = yield database_1.default.client.connect();
+                const sql = `SELECT DISTINCT course FROM students_info `;
+                const result = yield conn.query(sql);
+                conn.release();
+                const res = result.rows;
+                return res;
+            }
+            catch (err) {
+                throw new appError_1.default(`Unable to fetch course from Database.`, 400);
+            }
+        });
+    }
 }
 exports.default = DashboardService;

@@ -103,11 +103,10 @@ const changedPassword = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
     if (!errors.isEmpty()) {
         return next(errors);
     }
+    const { password } = req.body;
     try {
-        // Get user from collection
         const user = yield store.getUserById(req.user.id);
-        const updatedUser = yield store.update(user.id, req.body.password);
-        console.log(updatedUser);
+        const updatedUser = yield store.update(user.id, password);
         (0, httpsCookie_1.default)(updatedUser, 200, req, res);
     }
     catch (err) {
