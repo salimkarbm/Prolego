@@ -42,6 +42,9 @@ const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
             return next(new appError_1.default('user with this email already exist', 400));
         }
         const newUser = yield authStore.create(user);
+        if (newUser) {
+            return next(new appError_1.default('unable to create user', 400));
+        }
         (0, httpsCookie_1.default)(newUser, 201, req, res);
     }
     catch (err) {

@@ -1,8 +1,9 @@
 /* create students_info table */
 CREATE TABLE students_info (
-  id  serial PRIMARY KEY,
-  firstName varchar(50) ,
-  lastName varchar(50),
+  id  serial,
+  matno varchar(50) PRIMARY KEY,
+  firstName varchar(50) NOT NULL,
+  lastName varchar(50) NOT NULL,
   course varchar(50) NOT NULL,
   attendance varchar(50) NOT NULL,
   gender varchar(20) NOT NULL,

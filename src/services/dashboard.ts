@@ -1,11 +1,79 @@
 import DB from '../config/database';
 import AppError from '../utils/errors/appError';
-import { StudentInfo } from '../utils/interface/studentInfo';
+import {
+  StudentInfo,
+  StudentCount,
+  TopStudents,
+  Courses,
+} from '../utils/interface/studentInfo';
 
 class DashboardService {
-  async PredictStudentStatus(status: string, id: string) {
+  async saveStudentData(studenData: StudentInfo): Promise<StudentInfo[]> {
     try {
-      const sql = `UPDATE students_info SET studentstatus='${status}' WHERE id='${id}' RETURNING *`;
+      const conn = await DB.client.connect();
+      const sql = `INSERT INTO students_info (matNo,firstName,lastName,course,attendance,gender,ageAtEnrollment,region,maritalStatus,prevQualification,prevQualificationGrade,motherQualification,tuitionFee,fatherQualification,admissionGrade,schorlarship,firstSemesterCreditUnit,firstSemesterGrade,secondSemesterCreditUnit studentstatus,secondSemesterGrade) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,$20) RETURNING *`;
+      const data = Object.values(studenData);
+      const res = await conn.query(sql, data);
+      conn.release();
+      return res.rows;
+    } catch (err) {
+      throw new AppError(`Unable to create student.`, 400);
+    }
+  }
+
+  async getAllStudent(): Promise<StudentInfo[]> {
+    try {
+      const conn = await DB.client.connect();
+      const sql = 'SELECT * FROM students_info ORDER BY id ASC LIMIT 100';
+      const result = await conn.query(sql);
+      conn.release();
+      return result.rows;
+    } catch (err) {
+      throw new AppError(`Unable to fetch students from Database.`, 400);
+    }
+  }
+
+  async getStudent(studentId: string): Promise<StudentInfo> {
+    try {
+      const sql = `SELECT * FROM students_info WHERE matno=($1)`;
+      const conn = await DB.client.connect();
+      const result = await conn.query(sql, [studentId]);
+      const student = result.rows[0];
+      conn.release();
+      return student;
+    } catch (err) {
+      throw new AppError(`unable find student with id ${studentId}.`, 400);
+    }
+  }
+
+  async studentCategory(status: string): Promise<StudentInfo[]> {
+    try {
+      const sql = `SELECT * FROM students_info WHERE students_info.studentstatus=($1) OR students_info.gender=($1) OR students_info.maritalstatus=($1) OR students_info.region=($1) OR students_info.schorlarship=($1) `;
+      const conn = await DB.client.connect();
+      const result = await conn.query(sql, [status]);
+      conn.release();
+      return result.rows;
+    } catch (err) {
+      throw new AppError(`${status} does not exist.`, 400);
+    }
+  }
+
+  async notPredictedStudent(): Promise<StudentInfo[]> {
+    try {
+      const conn = await DB.client.connect();
+      const sql = `SELECT * FROM students_info WHERE studentstatus  IS NULL`;
+      const result = await conn.query(sql);
+      conn.release();
+      const res = result.rows;
+      return res;
+    } catch (err) {
+      throw new AppError(`Unable to fetch students from Database.`, 400);
+    }
+  }
+
+  async studentStatus(status: string, studentId: string): Promise<StudentInfo> {
+    try {
+      const sql = `UPDATE students_info SET studentstatus='${status}' WHERE matno='${studentId}' RETURNING *`;
       const conn = await DB.client.connect();
       const result = await conn.query(sql);
       conn.release();
@@ -16,24 +84,11 @@ class DashboardService {
     }
   }
 
-  async notPredictedStudent(): Promise<StudentInfo[]> {
+  async predictStudent(studentId: string): Promise<StudentInfo> {
     try {
       const conn = await DB.client.connect();
-      const sql = `SELECT * FROM students_info WHERE studentstatus IS NULL`;
-      const result = await conn.query(sql);
-      conn.release();
-      const res = result.rows;
-      return res;
-    } catch (err) {
-      throw new AppError(`Unable to fetch students from Database.`, 400);
-    }
-  }
-
-  async predictedStudent(id: string): Promise<StudentInfo> {
-    try {
-      const conn = await DB.client.connect();
-      const sql = `SELECT * FROM students_info WHERE id =($1)`;
-      const result = await conn.query(sql, [id]);
+      const sql = `SELECT * FROM students_info WHERE matno=($1)`;
+      const result = await conn.query(sql, [studentId]);
       conn.release();
       const res = result.rows[0];
       return res;
@@ -42,20 +97,7 @@ class DashboardService {
     }
   }
 
-  async graduate() {
-    try {
-      const conn = await DB.client.connect();
-      const sql = `SELECT COUNT(*) FROM students_info WHERE studentstatus = 'dropout' `;
-      const result = await conn.query(sql);
-      conn.release();
-      const res = result.rows[0];
-      return res;
-    } catch (err) {
-      throw new AppError(`Unable to fetch student from Database.`, 400);
-    }
-  }
-
-  async dropout() {
+  async graduate(): Promise<StudentCount> {
     try {
       const conn = await DB.client.connect();
       const sql = `SELECT COUNT(*) FROM students_info WHERE studentstatus = 'graduate' `;
@@ -68,7 +110,20 @@ class DashboardService {
     }
   }
 
-  async totalStudents() {
+  async dropout(): Promise<StudentCount> {
+    try {
+      const conn = await DB.client.connect();
+      const sql = `SELECT COUNT(*) FROM students_info WHERE studentstatus = 'dropout' `;
+      const result = await conn.query(sql);
+      conn.release();
+      const res = result.rows[0];
+      return res;
+    } catch (err) {
+      throw new AppError(`Unable to fetch student from Database.`, 400);
+    }
+  }
+
+  async totalStudents(): Promise<StudentCount> {
     try {
       const conn = await DB.client.connect();
       const sql = `SELECT COUNT(*) FROM students_info`;
@@ -81,46 +136,46 @@ class DashboardService {
     }
   }
 
-  async studentAttendance(date: string) {
+  async studentAttendance(category: string): Promise<StudentCount> {
     try {
-      const sql = `SELECT COUNT(*) FROM students_info WHERE  date = '${date}'`;
+      const sql = `SELECT COUNT(*) FROM students_info WHERE  course = '${category}' OR gender ='${category}'`;
       const conn = await DB.client.connect();
       const result = await conn.query(sql);
       conn.release();
       const student = result.rows[0];
       return student;
     } catch (err) {
-      throw new AppError(`there is no attendance for Day:${date}.`, 400);
+      throw new AppError(`there is no attendance for ${category}.`, 400);
     }
   }
 
-  async presentAttendance(date: string) {
+  async presentAttendance(course: string): Promise<StudentCount> {
     try {
-      const sql = `SELECT COUNT(*) FROM students_info WHERE  date = '${date}' AND attendance = 'present'`;
+      const sql = `SELECT COUNT(*) FROM students_info WHERE  course = '${course}' AND attendance = 'present'`;
       const conn = await DB.client.connect();
       const result = await conn.query(sql);
       conn.release();
       const student = result.rows[0];
       return student;
     } catch (err) {
-      throw new AppError(`there is no attendance for Day:${date}.`, 400);
+      throw new AppError(`there is no attendance for this:${course}.`, 400);
     }
   }
 
-  async absentAttendance(date: string) {
+  async absentAttendance(course: string): Promise<StudentCount> {
     try {
-      const sql = `SELECT COUNT(*) FROM students_info WHERE  date = '${date}' AND attendance = 'absent'`;
+      const sql = `SELECT COUNT(*) FROM students_info WHERE  course = '${course}' AND attendance = 'absent'`;
       const conn = await DB.client.connect();
       const result = await conn.query(sql);
       conn.release();
       const student = result.rows[0];
       return student;
     } catch (err) {
-      throw new AppError(`there is no attendance for Day:${date}.`, 400);
+      throw new AppError(`there is no attendance for this:${course}.`, 400);
     }
   }
 
-  async top5students() {
+  async top5students(): Promise<TopStudents[]> {
     try {
       const conn = await DB.client.connect();
       const sql = `SELECT firstsemestergrade,secondsemestergrade, firstname, lastname, (students_info.firstsemestergrade + students_info.secondsemestergrade) AS totalgrade FROM students_info ORDER BY totalgrade DESC LIMIT 5`;
@@ -132,7 +187,7 @@ class DashboardService {
     }
   }
 
-  async top5studentsBycourse(course: string) {
+  async top5studentsBycourse(course: string): Promise<TopStudents[]> {
     try {
       const conn = await DB.client.connect();
       const sql = `SELECT firstsemestergrade,secondsemestergrade, firstname, lastname, (students_info.firstsemestergrade + students_info.secondsemestergrade) AS totalgrade FROM students_info WHERE students_info.course=($1) ORDER BY totalgrade DESC LIMIT 5`;
@@ -144,7 +199,7 @@ class DashboardService {
     }
   }
 
-  async availableCourses() {
+  async availableCourses(): Promise<Courses[]> {
     try {
       const conn = await DB.client.connect();
       const sql = `SELECT DISTINCT course FROM students_info `;

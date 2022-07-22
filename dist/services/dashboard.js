@@ -15,10 +15,83 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../config/database"));
 const appError_1 = __importDefault(require("../utils/errors/appError"));
 class DashboardService {
-    PredictStudentStatus(status, id) {
+    saveStudentData(studenData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `UPDATE students_info SET studentstatus='${status}' WHERE id='${id}' RETURNING *`;
+                const conn = yield database_1.default.client.connect();
+                const sql = `INSERT INTO students_info (matNo,firstName,lastName,course,attendance,gender,ageAtEnrollment,region,maritalStatus,prevQualification,prevQualificationGrade,motherQualification,tuitionFee,fatherQualification,admissionGrade,schorlarship,firstSemesterCreditUnit,firstSemesterGrade,secondSemesterCreditUnit studentstatus,secondSemesterGrade) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,$20) RETURNING *`;
+                const data = Object.values(studenData);
+                const res = yield conn.query(sql, data);
+                conn.release();
+                return res.rows;
+            }
+            catch (err) {
+                throw new appError_1.default(`Unable to create student.`, 400);
+            }
+        });
+    }
+    getAllStudent() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const conn = yield database_1.default.client.connect();
+                const sql = 'SELECT * FROM students_info ORDER id ASC ';
+                const result = yield conn.query(sql);
+                conn.release();
+                return result.rows;
+            }
+            catch (err) {
+                throw new appError_1.default(`Unable to fetch students from Database.`, 400);
+            }
+        });
+    }
+    getStudent(studentId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const sql = `SELECT * FROM students_info WHERE matno=($1)`;
+                const conn = yield database_1.default.client.connect();
+                const result = yield conn.query(sql, [studentId]);
+                const student = result.rows[0];
+                conn.release();
+                return student;
+            }
+            catch (err) {
+                throw new appError_1.default(`unable find student with id ${studentId}.`, 400);
+            }
+        });
+    }
+    studentCategory(status) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const sql = `SELECT * FROM students_info WHERE students_info.studentstatus=($1) OR students_info.gender=($1) OR students_info.maritalstatus=($1) OR students_info.region=($1) OR students_info.schorlarship=($1) `;
+                const conn = yield database_1.default.client.connect();
+                const result = yield conn.query(sql, [status]);
+                conn.release();
+                return result.rows;
+            }
+            catch (err) {
+                throw new appError_1.default(`${status} does not exist.`, 400);
+            }
+        });
+    }
+    notPredictedStudent() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const conn = yield database_1.default.client.connect();
+                const sql = `SELECT * FROM students_info WHERE studentstatus  IS NULL`;
+                const result = yield conn.query(sql);
+                conn.release();
+                const res = result.rows;
+                return res;
+            }
+            catch (err) {
+                throw new appError_1.default(`Unable to fetch students from Database.`, 400);
+            }
+        });
+    }
+    studentStatus(status, studentId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const sql = `UPDATE students_info SET studentstatus='${status}' WHERE matno='${studentId}' RETURNING *`;
                 const conn = yield database_1.default.client.connect();
                 const result = yield conn.query(sql);
                 conn.release();
@@ -30,27 +103,12 @@ class DashboardService {
             }
         });
     }
-    notPredictedStudent() {
+    predictStudent(studentId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();
-                const sql = `SELECT * FROM students_info WHERE studentstatus IS NULL`;
-                const result = yield conn.query(sql);
-                conn.release();
-                const res = result.rows;
-                return res;
-            }
-            catch (err) {
-                throw new appError_1.default(`Unable to fetch students from Database.`, 400);
-            }
-        });
-    }
-    predictedStudent(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const conn = yield database_1.default.client.connect();
-                const sql = `SELECT * FROM students_info WHERE id =($1)`;
-                const result = yield conn.query(sql, [id]);
+                const sql = `SELECT * FROM students_info WHERE matno=($1)`;
+                const result = yield conn.query(sql, [studentId]);
                 conn.release();
                 const res = result.rows[0];
                 return res;
@@ -64,7 +122,7 @@ class DashboardService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();
-                const sql = `SELECT COUNT(*) FROM students_info WHERE studentstatus = 'dropout' `;
+                const sql = `SELECT COUNT(*) FROM students_info WHERE studentstatus = 'graduate' `;
                 const result = yield conn.query(sql);
                 conn.release();
                 const res = result.rows[0];
@@ -79,7 +137,7 @@ class DashboardService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();
-                const sql = `SELECT COUNT(*) FROM students_info WHERE studentstatus = 'graduate' `;
+                const sql = `SELECT COUNT(*) FROM students_info WHERE studentstatus = 'dropout' `;
                 const result = yield conn.query(sql);
                 conn.release();
                 const res = result.rows[0];
@@ -105,10 +163,10 @@ class DashboardService {
             }
         });
     }
-    studentAttendance(date) {
+    studentAttendance(course) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `SELECT COUNT(*) FROM students_info WHERE  date = '${date}'`;
+                const sql = `SELECT COUNT(*) FROM students_info WHERE  course = '${course}'`;
                 const conn = yield database_1.default.client.connect();
                 const result = yield conn.query(sql);
                 conn.release();
@@ -116,14 +174,14 @@ class DashboardService {
                 return student;
             }
             catch (err) {
-                throw new appError_1.default(`there is no attendance for Day:${date}.`, 400);
+                throw new appError_1.default(`there is no attendance for this ${course}.`, 400);
             }
         });
     }
-    presentAttendance(date) {
+    presentAttendance(course) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `SELECT COUNT(*) FROM students_info WHERE  date = '${date}' AND attendance = 'present'`;
+                const sql = `SELECT COUNT(*) FROM students_info WHERE  course = '${course}' AND attendance = 'present'`;
                 const conn = yield database_1.default.client.connect();
                 const result = yield conn.query(sql);
                 conn.release();
@@ -131,14 +189,14 @@ class DashboardService {
                 return student;
             }
             catch (err) {
-                throw new appError_1.default(`there is no attendance for Day:${date}.`, 400);
+                throw new appError_1.default(`there is no attendance for this:${course}.`, 400);
             }
         });
     }
-    absentAttendance(date) {
+    absentAttendance(course) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `SELECT COUNT(*) FROM students_info WHERE  date = '${date}' AND attendance = 'absent'`;
+                const sql = `SELECT COUNT(*) FROM students_info WHERE  course = '${course}' AND attendance = 'absent'`;
                 const conn = yield database_1.default.client.connect();
                 const result = yield conn.query(sql);
                 conn.release();
@@ -146,7 +204,7 @@ class DashboardService {
                 return student;
             }
             catch (err) {
-                throw new appError_1.default(`there is no attendance for Day:${date}.`, 400);
+                throw new appError_1.default(`there is no attendance for this:${course}.`, 400);
             }
         });
     }

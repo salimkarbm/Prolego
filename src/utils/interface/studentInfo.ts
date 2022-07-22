@@ -1,5 +1,6 @@
 export interface StudentInfo {
   id?: string;
+  matno: string;
   firstname?: string;
   lastname?: string;
   course: number;
@@ -22,7 +23,21 @@ export interface StudentInfo {
   studentstatus?: string;
   createdat?: string;
 }
-export const course = new Map()
+
+export interface StudentCount {
+  count: number;
+}
+export interface Courses {
+  course: string;
+}
+export interface TopStudents {
+  firstname: string;
+  lastname: string;
+  firstsemestergrade: number;
+  secondsemestergrade: number;
+  totalgrade: number;
+}
+export const courses = new Map()
   .set('management', 11)
   .set('social service', 8)
   .set('information technology', 9)

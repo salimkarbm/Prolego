@@ -8,7 +8,7 @@ import errorHandler from './services/errorsHandler';
 import AppError from './utils/errors/appError';
 import authRoutes from './api/routes/authentication';
 import userRoutes from './api/routes/user';
-import studentInfoRoutes from './api/routes/students';
+// import studentInfoRoutes from './api/routes/students';
 import dashboardRoutes from './api/routes/dashboard';
 
 const cwd = process.cwd();
@@ -68,7 +68,7 @@ app.get('/', async (req: Request, res: Response) => {
 
 authRoutes(app);
 userRoutes(app);
-studentInfoRoutes(app);
+// studentInfoRoutes(app);
 dashboardRoutes(app);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {

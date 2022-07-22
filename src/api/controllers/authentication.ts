@@ -36,6 +36,9 @@ export const create = async (
       return next(new AppError('user with this email already exist', 400));
     }
     const newUser = await authStore.create(user);
+    if (newUser) {
+      return next(new AppError('unable to create user', 400));
+    }
     createSendToken(newUser, 201, req, res);
   } catch (err) {
     return next(err);

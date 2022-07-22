@@ -68,11 +68,11 @@ const getUserByEmail = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.getUserByEmail = getUserByEmail;
-const index = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const index = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = yield store.index();
         if (!users) {
-            return new appError_1.default('users not found', 400);
+            return next(new appError_1.default('users not found', 404));
         }
         const allUser = users.map((el) => {
             const userObj = {
@@ -106,7 +106,13 @@ const changedPassword = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
     const { password } = req.body;
     try {
         const user = yield store.getUserById(req.user.id);
+        if (!user) {
+            return next(new appError_1.default('user not found', 400));
+        }
         const updatedUser = yield store.update(user.id, password);
+        if (!user) {
+            return next(new appError_1.default('unable to update user', 400));
+        }
         (0, httpsCookie_1.default)(updatedUser, 200, req, res);
     }
     catch (err) {

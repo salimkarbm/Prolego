@@ -22,7 +22,7 @@ const errorsHandler_1 = __importDefault(require("./services/errorsHandler"));
 const appError_1 = __importDefault(require("./utils/errors/appError"));
 const authentication_1 = __importDefault(require("./api/routes/authentication"));
 const user_1 = __importDefault(require("./api/routes/user"));
-const students_1 = __importDefault(require("./api/routes/students"));
+// import studentInfoRoutes from './api/routes/students';
 const dashboard_1 = __importDefault(require("./api/routes/dashboard"));
 const cwd = process.cwd();
 process.on('uncaughtException', (err) => {
@@ -63,7 +63,7 @@ app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 // Routes
 (0, authentication_1.default)(app);
 (0, user_1.default)(app);
-(0, students_1.default)(app);
+// studentInfoRoutes(app);
 (0, dashboard_1.default)(app);
 app.all('*', (req, res, next) => {
     next(new appError_1.default(`can't find ${req.originalUrl} on server!`, 404));
