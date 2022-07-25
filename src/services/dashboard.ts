@@ -8,16 +8,32 @@ import {
 } from '../utils/interface/studentInfo';
 
 class DashboardService {
-  async saveStudentData(studenData: StudentInfo): Promise<StudentInfo[]> {
+  async saveStudentData(studentData: StudentInfo): Promise<StudentInfo[]> {
     try {
       const conn = await DB.client.connect();
-      const sql = `INSERT INTO students_info (matNo,firstName,lastName,course,attendance,gender,ageAtEnrollment,region,maritalStatus,prevQualification,prevQualificationGrade,motherQualification,tuitionFee,fatherQualification,admissionGrade,schorlarship,firstSemesterCreditUnit,firstSemesterGrade,secondSemesterCreditUnit studentstatus,secondSemesterGrade) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,$20) RETURNING *`;
-      const data = Object.values(studenData);
+      const sql = `INSERT INTO students_info (matNo,firstName,lastName,course,attendance,gender,ageAtEnrollment,region,maritalStatus,prevQualification,prevQualificationGrade,motherQualification,tuitionFee,fatherQualification,admissionGrade,schorlarship,firstSemesterCreditUnit,firstSemesterGrade,secondSemesterCreditUnit secondSemesterGrade) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,$20) RETURNING *`;
+      const data = Object.values(studentData);
       const res = await conn.query(sql, data);
       conn.release();
       return res.rows;
     } catch (err) {
       throw new AppError(`Unable to create student.`, 400);
+    }
+  }
+
+  async updateStudentData(studentData: StudentInfo): Promise<StudentInfo[]> {
+    try {
+      const conn = await DB.client.connect();
+      const sql = `UPDATE students_info SET ,firstName=($1),lastName=($2),course=($3),attendance=($4),gender=($5),ageAtEnrollment=($6),region=($7),maritalStatus=($8),prevQualification=($9),prevQualificationGrade=($10),motherQualification=($11),tuitionFee=($12),fatherQualification=($13),admissionGrade=($14),schorlarship=($15),firstSemesterCreditUnit=($16),firstSemesterGrade=($17),secondSemesterCreditUnit=($18) secondSemesterGrade=($19) WHERE matno = ${studentData.matno} RETURNING *`;
+      const data = Object.values(studentData);
+      const res = await conn.query(sql, data);
+      conn.release();
+      return res.rows[0];
+    } catch (err) {
+      throw new AppError(
+        `Unable to update student with studentId: ${studentData.matno}.`,
+        400
+      );
     }
   }
 

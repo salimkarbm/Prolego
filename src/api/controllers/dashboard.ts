@@ -25,8 +25,17 @@ export const upload = async (
   try {
     const file = req.files?.mFile as UploadedFile;
     const saveFilePath = path.join(cwd, 'data', 'upload', file.name);
+    if (!saveFilePath) {
+      return new AppError('cannot find path to file', 404);
+    }
+    if (!(path.extname(saveFilePath) === '.csv')) {
+      return new AppError('Please provide a CSV file', 400);
+    }
     await file.mv(saveFilePath);
     const studentData = await fileConverter(saveFilePath);
+    if (!studentData) {
+      return new AppError('Unable to convert file', 404);
+    }
     if (studentData instanceof Array) {
       let studentObj: StudentInfo;
       // eslint-disable-next-line no-restricted-syntax
@@ -54,7 +63,14 @@ export const upload = async (
           secondsemestergrade: student.Cur_U_2nd_Sem_Grade,
         };
         // eslint-disable-next-line no-await-in-loop
-        await store.saveStudentData(studentObj);
+        if (!(await store.getStudent(studentObj.matno))) {
+          // eslint-disable-next-line no-await-in-loop
+          await store.saveStudentData(studentObj);
+        }
+        // eslint-disable-next-line no-await-in-loop
+        await store.updateStudentData(studentObj);
+        // eslint-disable-next-line no-await-in-loop
+        await store.predictStudent(studentObj.matno);
       }
       res
         .status(200)

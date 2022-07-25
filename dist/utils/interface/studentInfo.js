@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fatherQua = exports.motherQua = exports.region = exports.course = void 0;
-exports.course = new Map()
+exports.fatherQua = exports.motherQua = exports.region = exports.courses = void 0;
+exports.courses = new Map()
     .set('management', 11)
     .set('social service', 8)
     .set('information technology', 9)

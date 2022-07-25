@@ -13,16 +13,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const csvtojson_1 = __importDefault(require("csvtojson"));
-const path_1 = __importDefault(require("path"));
-const appError_1 = __importDefault(require("./errors/appError"));
-// import StudentInfo from './interface/studentInfo';
+// import path from 'path';
+// import AppError from './errors/appError';
+// import { StudentInfo }  from './interface/studentInfo';
 const fileConverter = (csvFilePath) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!csvFilePath) {
-        return new appError_1.default('cannot find path to file', 404);
-    }
-    if (!(path_1.default.extname(csvFilePath) === '.csv')) {
-        return new appError_1.default('Please provide a CSV file', 400);
-    }
+    // if (!csvFilePath) {
+    //   return new AppError('cannot find path to file', 404);
+    // }
+    // if (!(path.extname(csvFilePath) === '.csv')) {
+    //   return new AppError('Please provide a CSV file', 400);
+    // }
     const convertedFile = yield (0, csvtojson_1.default)().fromFile(csvFilePath);
     const data = convertedFile.slice(0, 100);
     return data;

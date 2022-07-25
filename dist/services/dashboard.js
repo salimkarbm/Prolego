@@ -34,7 +34,7 @@ class DashboardService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();
-                const sql = 'SELECT * FROM students_info ORDER id ASC ';
+                const sql = 'SELECT * FROM students_info ORDER BY id ASC LIMIT 100';
                 const result = yield conn.query(sql);
                 conn.release();
                 return result.rows;
@@ -163,10 +163,10 @@ class DashboardService {
             }
         });
     }
-    studentAttendance(course) {
+    studentAttendance(category) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `SELECT COUNT(*) FROM students_info WHERE  course = '${course}'`;
+                const sql = `SELECT COUNT(*) FROM students_info WHERE  course = '${category}' OR gender ='${category}'`;
                 const conn = yield database_1.default.client.connect();
                 const result = yield conn.query(sql);
                 conn.release();
@@ -174,7 +174,7 @@ class DashboardService {
                 return student;
             }
             catch (err) {
-                throw new appError_1.default(`there is no attendance for this ${course}.`, 400);
+                throw new appError_1.default(`there is no attendance for ${category}.`, 400);
             }
         });
     }

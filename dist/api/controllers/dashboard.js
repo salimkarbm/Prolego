@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.courses = exports.top5studentsbycourse = exports.top5students = exports.attendance = exports.predictionSummary = exports.predictStudentById = exports.predictAll = exports.studentByCategory = exports.getStudent = exports.getAllStudent = exports.upload = void 0;
+exports.courseOfStudy = exports.top5studentsbycourse = exports.top5students = exports.attendance = exports.predictionSummary = exports.predictStudentById = exports.predictAll = exports.studentByCategory = exports.getStudent = exports.getAllStudent = exports.upload = void 0;
 const axios_1 = __importDefault(require("axios"));
 const path_1 = __importDefault(require("path"));
 const csvtojsonConverter_1 = __importDefault(require("../../utils/csvtojsonConverter"));
@@ -28,39 +28,40 @@ const upload = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         const saveFilePath = path_1.default.join(cwd, 'data', 'upload', file.name);
         yield file.mv(saveFilePath);
         const studentData = yield (0, csvtojsonConverter_1.default)(saveFilePath);
-        if (studentData instanceof Array) {
-            let studentObj;
-            // eslint-disable-next-line no-restricted-syntax
-            for (const student of studentData) {
-                studentObj = {
-                    matno: student.matno,
-                    firstname: student.firstname,
-                    lastname: student.lastname,
-                    course: student.Course,
-                    attendance: student.Attendance,
-                    gender: student.Gender,
-                    ageatenrollment: student.Age_at_Enroll,
-                    region: student.Region,
-                    maritalstatus: student.Marital_Status,
-                    prevqualification: student.Prev_Qua,
-                    prevqualificationgrade: student.Prev_Qua_Grade,
-                    motherqualification: student.Mother_Qua,
-                    tuitionfee: student.Tui_Up_to_Date,
-                    fatherqualification: student.Father_Qua,
-                    admissiongrade: student.Adm_Grade,
-                    schorlarship: student.S_Holder,
-                    firstsemestercreditunit: student.Cur_U_1st_Sem_Credit,
-                    firstsemestergrade: student.Cur_U_1st_Sem_Grade,
-                    secondsemestercreditunit: student.Cur_U_2nd_Sem_Credit,
-                    secondsemestergrade: student.Cur_U_2nd_Sem_Grade,
-                };
-                // eslint-disable-next-line no-await-in-loop
-                yield store.saveStudentData(studentObj);
-            }
-            res
-                .status(200)
-                .json({ status: 'success', message: 'file uploaded successfully' });
-        }
+        console.log(studentData);
+        // if (studentData instanceof Array) {
+        //   let studentObj: StudentInfo;
+        //   // eslint-disable-next-line no-restricted-syntax
+        //   for (const student of studentData) {
+        //     studentObj = {
+        //       matno: student.matno,
+        //       firstname: student.firstname,
+        //       lastname: student.lastname,
+        //       course: student.Course,
+        //       attendance: student.Attendance,
+        //       gender: student.Gender,
+        //       ageatenrollment: student.Age_at_Enroll,
+        //       region: student.Region,
+        //       maritalstatus: student.Marital_Status,
+        //       prevqualification: student.Prev_Qua,
+        //       prevqualificationgrade: student.Prev_Qua_Grade,
+        //       motherqualification: student.Mother_Qua,
+        //       tuitionfee: student.Tui_Up_to_Date,
+        //       fatherqualification: student.Father_Qua,
+        //       admissiongrade: student.Adm_Grade,
+        //       schorlarship: student.S_Holder,
+        //       firstsemestercreditunit: student.Cur_U_1st_Sem_Credit,
+        //       firstsemestergrade: student.Cur_U_1st_Sem_Grade,
+        //       secondsemestercreditunit: student.Cur_U_2nd_Sem_Credit,
+        //       secondsemestergrade: student.Cur_U_2nd_Sem_Grade,
+        //     };
+        //     // eslint-disable-next-line no-await-in-loop
+        //     await store.saveStudentData(studentObj);
+        //   }
+        //   res
+        //     .status(200)
+        //     .json({ status: 'success', message: 'file uploaded successfully' });
+        // }
     }
     catch (err) {
         return next(err);
@@ -110,7 +111,13 @@ exports.getStudent = getStudent;
 const studentByCategory = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const status = req.query.category;
+        if (status === '') {
+            return next(new appError_1.default(`Please provide a course`, 404));
+        }
         const category = yield store.studentCategory(status);
+        if (!category) {
+            return next(new appError_1.default(`This ${status} does not exist`, 404));
+        }
         if (category.length === 0) {
             return next(new appError_1.default('Not found', 404));
         }
@@ -135,7 +142,7 @@ const predictAll = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         // eslint-disable-next-line no-restricted-syntax
         for (const student of students) {
             // eslint-disable-next-line no-await-in-loop
-            const response = yield axios_1.default.post(`https://prolego-api.herokuapp.com/predict?Marital_Status=${student.maritalstatus}&Course=${studentInfo_1.course.get(student.course)}&Attendance=${student.attendance}&Prev_Qua=${student.prevqualification}&Prev_Qua_Grade=${student.prevqualificationgrade}&Region=${studentInfo_1.region.get(student.region)}&Mother_Qua=${studentInfo_1.motherQua.get(student.motherqualification)}&Father_Qua=${studentInfo_1.fatherQua.get(student.fatherqualification)}&Adm_Grade=${student.admissiongrade}&Tui_Up_to_Date=${student.tuitionfee}&Gender=${student.gender}&S_Holder=${student.schorlarship}&Age_at_Enroll=${student.ageatenrollment}&Cur_U_1st_Sem_Credit=${student.firstsemestercreditunit}&Cur_U_1st_Sem_Grade=${student.firstsemestergrade}&Cur_U_2nd_Sem_Credit=${student.secondsemestercreditunit}&Cur_U_2nd_Sem_Grade=${student.secondsemestergrade}`);
+            const response = yield axios_1.default.post(`https://prolego-api.herokuapp.com/predict?Marital_Status=${student.maritalstatus}&Course=${studentInfo_1.courses.get(student.course)}&Attendance=${student.attendance}&Prev_Qua=${student.prevqualification}&Prev_Qua_Grade=${student.prevqualificationgrade}&Region=${studentInfo_1.region.get(student.region)}&Mother_Qua=${studentInfo_1.motherQua.get(student.motherqualification)}&Father_Qua=${studentInfo_1.fatherQua.get(student.fatherqualification)}&Adm_Grade=${student.admissiongrade}&Tui_Up_to_Date=${student.tuitionfee}&Gender=${student.gender}&S_Holder=${student.schorlarship}&Age_at_Enroll=${student.ageatenrollment}&Cur_U_1st_Sem_Credit=${student.firstsemestercreditunit}&Cur_U_1st_Sem_Grade=${student.firstsemestergrade}&Cur_U_2nd_Sem_Credit=${student.secondsemestercreditunit}&Cur_U_2nd_Sem_Grade=${student.secondsemestergrade}`);
             let status;
             if (response.data.prediction[0] === 1) {
                 status = 'dropout';
@@ -165,7 +172,7 @@ const predictStudentById = (req, res, next) => __awaiter(void 0, void 0, void 0,
         if (!student) {
             return next(new appError_1.default(`Unable to find student with this matno:${req.params.matno}`, 404));
         }
-        const response = yield axios_1.default.post(`https://prolego-api.herokuapp.com/predict?Marital_Status=${student.maritalstatus}&Course=${studentInfo_1.course.get(student.course)}&Attendance=${student.attendance}&Prev_Qua=${student.prevqualification}&Prev_Qua_Grade=${student.prevqualificationgrade}&Region=${studentInfo_1.region.get(student.region)}&Mother_Qua=${studentInfo_1.motherQua.get(student.motherqualification)}&Father_Qua=${studentInfo_1.fatherQua.get(student.fatherqualification)}&Adm_Grade=${student.admissiongrade}&Tui_Up_to_Date=${student.tuitionfee}&Gender=${student.gender}&S_Holder=${student.schorlarship}&Age_at_Enroll=${student.ageatenrollment}&Cur_U_1st_Sem_Credit=${student.firstsemestercreditunit}&Cur_U_1st_Sem_Grade=${student.firstsemestergrade}&Cur_U_2nd_Sem_Credit=${student.secondsemestercreditunit}&Cur_U_2nd_Sem_Grade=${student.secondsemestergrade}`);
+        const response = yield axios_1.default.post(`https://prolego-api.herokuapp.com/predict?Marital_Status=${student.maritalstatus}&Course=${studentInfo_1.courses.get(student.course)}&Attendance=${student.attendance}&Prev_Qua=${student.prevqualification}&Prev_Qua_Grade=${student.prevqualificationgrade}&Region=${studentInfo_1.region.get(student.region)}&Mother_Qua=${studentInfo_1.motherQua.get(student.motherqualification)}&Father_Qua=${studentInfo_1.fatherQua.get(student.fatherqualification)}&Adm_Grade=${student.admissiongrade}&Tui_Up_to_Date=${student.tuitionfee}&Gender=${student.gender}&S_Holder=${student.schorlarship}&Age_at_Enroll=${student.ageatenrollment}&Cur_U_1st_Sem_Credit=${student.firstsemestercreditunit}&Cur_U_1st_Sem_Grade=${student.firstsemestergrade}&Cur_U_2nd_Sem_Credit=${student.secondsemestercreditunit}&Cur_U_2nd_Sem_Grade=${student.secondsemestergrade}`);
         if (response.data.prediction[0] === 1) {
             status = 'dropout';
         }
@@ -194,13 +201,12 @@ const predictionSummary = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     const totalNumberOfStudents = yield store.totalStudents();
     const graduates = yield store.graduate();
     const dropouts = yield store.dropout();
-    console.log(totalNumberOfStudents, graduates, dropouts);
     try {
         const dropoutStudents = (dropouts.count / totalNumberOfStudents.count) *
             100;
         const graduatedStudents = (graduates.count / totalNumberOfStudents.count) *
             100;
-        const totalStudents = parseInt(totalNumberOfStudents.count, 10);
+        const totalStudents = totalNumberOfStudents.count;
         const percentageOfDropoutStudents = `${dropoutStudents}%`;
         const percentageOfgraduatedStudents = `${graduatedStudents}%`;
         res.status(200).json({
@@ -218,17 +224,19 @@ const predictionSummary = (req, res, next) => __awaiter(void 0, void 0, void 0, 
 });
 exports.predictionSummary = predictionSummary;
 const attendance = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { courseOfStudy } = req.query;
-    const totalAttendanceByDay = yield store.studentAttendance(courseOfStudy);
-    if (!courseOfStudy) {
-        return next(new appError_1.default(`This ${courseOfStudy} does not exist`, 404));
+    const { course } = req.query;
+    if (course === '') {
+        return next(new appError_1.default(`Please provide a course`, 404));
     }
+    const totalAttendance = yield store.studentAttendance(course);
+    if (!totalAttendance) {
+        return next(new appError_1.default(`This ${course} does not exist`, 404));
+    }
+    const absent = yield store.absentAttendance(course);
+    const present = yield store.presentAttendance(course);
     try {
-        const absent = yield store.absentAttendance(courseOfStudy);
-        const present = yield store.presentAttendance(courseOfStudy);
-        const studentAbsent = (absent.count / totalAttendanceByDay.count) * 100;
-        const studentPresent = (present.count / totalAttendanceByDay.count) *
-            100;
+        const studentAbsent = (absent.count / totalAttendance.count) * 100;
+        const studentPresent = (present.count / totalAttendance.count) * 100;
         const percentageOfStudentAbsent = `${studentAbsent}%`;
         const percentageOfStudentPresent = `${studentPresent}%`;
         res.status(200).json({
@@ -262,8 +270,14 @@ const top5students = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
 exports.top5students = top5students;
 const top5studentsbycourse = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dept = req.query.course;
-        const top5student = yield store.top5studentsBycourse(dept);
+        const { course } = req.query;
+        if (course === '') {
+            return next(new appError_1.default(`Please provide a course`, 404));
+        }
+        const top5student = yield store.top5studentsBycourse(course);
+        if (top5student.length === 0) {
+            return next(new appError_1.default(`This course:${course} does not exist`, 404));
+        }
         res.status(200).json({
             status: 'success',
             results: top5student.length,
@@ -277,7 +291,7 @@ const top5studentsbycourse = (req, res, next) => __awaiter(void 0, void 0, void 
     }
 });
 exports.top5studentsbycourse = top5studentsbycourse;
-const courses = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const courseOfStudy = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const availableCourses = yield store.availableCourses();
         res.status(200).json({
@@ -292,4 +306,4 @@ const courses = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         next(err);
     }
 });
-exports.courses = courses;
+exports.courseOfStudy = courseOfStudy;
