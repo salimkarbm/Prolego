@@ -227,6 +227,19 @@ class DashboardService {
       throw new AppError(`Unable to fetch course from Database.`, 400);
     }
   }
+
+  async search(searchparam: string): Promise<StudentInfo[]> {
+    try {
+      const conn = await DB.client.connect();
+      const sql = `SELECT * FROM students_info WHERE firstname LIKE '%${searchparam}%' OR lastname LIKE '%${searchparam}%' OR matno LIKE '%${searchparam}%' `;
+      const result = await conn.query(sql);
+      conn.release();
+      const res = result.rows;
+      return res;
+    } catch (err) {
+      throw new AppError(`Unable to search student from Database.`, 400);
+    }
+  }
 }
 
 export default DashboardService;

@@ -15,18 +15,33 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = __importDefault(require("../config/database"));
 const appError_1 = __importDefault(require("../utils/errors/appError"));
 class DashboardService {
-    saveStudentData(studenData) {
+    saveStudentData(studentData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();
-                const sql = `INSERT INTO students_info (matNo,firstName,lastName,course,attendance,gender,ageAtEnrollment,region,maritalStatus,prevQualification,prevQualificationGrade,motherQualification,tuitionFee,fatherQualification,admissionGrade,schorlarship,firstSemesterCreditUnit,firstSemesterGrade,secondSemesterCreditUnit studentstatus,secondSemesterGrade) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,$20) RETURNING *`;
-                const data = Object.values(studenData);
+                const sql = `INSERT INTO students_info (matNo,firstName,lastName,course,attendance,gender,ageAtEnrollment,region,maritalStatus,prevQualification,prevQualificationGrade,motherQualification,tuitionFee,fatherQualification,admissionGrade,schorlarship,firstSemesterCreditUnit,firstSemesterGrade,secondSemesterCreditUnit secondSemesterGrade) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,$20) RETURNING *`;
+                const data = Object.values(studentData);
                 const res = yield conn.query(sql, data);
                 conn.release();
                 return res.rows;
             }
             catch (err) {
                 throw new appError_1.default(`Unable to create student.`, 400);
+            }
+        });
+    }
+    updateStudentData(studentData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const conn = yield database_1.default.client.connect();
+                const sql = `UPDATE students_info SET ,firstName=($1),lastName=($2),course=($3),attendance=($4),gender=($5),ageAtEnrollment=($6),region=($7),maritalStatus=($8),prevQualification=($9),prevQualificationGrade=($10),motherQualification=($11),tuitionFee=($12),fatherQualification=($13),admissionGrade=($14),schorlarship=($15),firstSemesterCreditUnit=($16),firstSemesterGrade=($17),secondSemesterCreditUnit=($18) secondSemesterGrade=($19) WHERE matno = ${studentData.matno} RETURNING *`;
+                const data = Object.values(studentData);
+                const res = yield conn.query(sql, data);
+                conn.release();
+                return res.rows[0];
+            }
+            catch (err) {
+                throw new appError_1.default(`Unable to update student with studentId: ${studentData.matno}.`, 400);
             }
         });
     }
@@ -241,6 +256,21 @@ class DashboardService {
             try {
                 const conn = yield database_1.default.client.connect();
                 const sql = `SELECT DISTINCT course FROM students_info `;
+                const result = yield conn.query(sql);
+                conn.release();
+                const res = result.rows;
+                return res;
+            }
+            catch (err) {
+                throw new appError_1.default(`Unable to fetch course from Database.`, 400);
+            }
+        });
+    }
+    search(searchparam) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const conn = yield database_1.default.client.connect();
+                const sql = `SELECT * FROM students_info WHERE firstname LIKE '%${searchparam}%' OR lastname LIKE '%${searchparam}%' OR matno LIKE '%${searchparam}%' `;
                 const result = yield conn.query(sql);
                 conn.release();
                 const res = result.rows;

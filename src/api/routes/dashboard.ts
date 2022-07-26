@@ -12,6 +12,7 @@ import {
   getAllStudent,
   getStudent,
   studentByCategory,
+  search,
 } from '../controllers/dashboard';
 
 const dashboard = (app: express.Application) => {
@@ -26,6 +27,7 @@ const dashboard = (app: express.Application) => {
   app.get('/api/v1/students', getAllStudent);
   app.get('/api/v1/students/:matno', getStudent);
   app.get('/api/v1/studentscategory', studentByCategory);
+  app.get('/api/v1/search', search);
 };
 
 export default dashboard;

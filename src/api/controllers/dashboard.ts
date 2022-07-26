@@ -407,3 +407,28 @@ export const courseOfStudy = async (
     next(err);
   }
 };
+export const search = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { queryString } = req.query;
+    if (queryString === '') {
+      return next(new AppError(`Please provide a search params`, 404));
+    }
+    const response = await store.search(queryString as string);
+    if (response.length === 0) {
+      return next(new AppError(`not found`, 404));
+    }
+    res.status(200).json({
+      status: 'success',
+      results: response.length,
+      data: {
+        response,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};

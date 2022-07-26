@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.courseOfStudy = exports.top5studentsbycourse = exports.top5students = exports.attendance = exports.predictionSummary = exports.predictStudentById = exports.predictAll = exports.studentByCategory = exports.getStudent = exports.getAllStudent = exports.upload = void 0;
+exports.search = exports.courseOfStudy = exports.top5studentsbycourse = exports.top5students = exports.attendance = exports.predictionSummary = exports.predictStudentById = exports.predictAll = exports.studentByCategory = exports.getStudent = exports.getAllStudent = exports.upload = void 0;
 const axios_1 = __importDefault(require("axios"));
 const path_1 = __importDefault(require("path"));
 const csvtojsonConverter_1 = __importDefault(require("../../utils/csvtojsonConverter"));
@@ -26,42 +26,57 @@ const upload = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
     try {
         const file = (_a = req.files) === null || _a === void 0 ? void 0 : _a.mFile;
         const saveFilePath = path_1.default.join(cwd, 'data', 'upload', file.name);
+        if (!saveFilePath) {
+            return new appError_1.default('cannot find path to file', 404);
+        }
+        if (!(path_1.default.extname(saveFilePath) === '.csv')) {
+            return new appError_1.default('Please provide a CSV file', 400);
+        }
         yield file.mv(saveFilePath);
         const studentData = yield (0, csvtojsonConverter_1.default)(saveFilePath);
-        console.log(studentData);
-        // if (studentData instanceof Array) {
-        //   let studentObj: StudentInfo;
-        //   // eslint-disable-next-line no-restricted-syntax
-        //   for (const student of studentData) {
-        //     studentObj = {
-        //       matno: student.matno,
-        //       firstname: student.firstname,
-        //       lastname: student.lastname,
-        //       course: student.Course,
-        //       attendance: student.Attendance,
-        //       gender: student.Gender,
-        //       ageatenrollment: student.Age_at_Enroll,
-        //       region: student.Region,
-        //       maritalstatus: student.Marital_Status,
-        //       prevqualification: student.Prev_Qua,
-        //       prevqualificationgrade: student.Prev_Qua_Grade,
-        //       motherqualification: student.Mother_Qua,
-        //       tuitionfee: student.Tui_Up_to_Date,
-        //       fatherqualification: student.Father_Qua,
-        //       admissiongrade: student.Adm_Grade,
-        //       schorlarship: student.S_Holder,
-        //       firstsemestercreditunit: student.Cur_U_1st_Sem_Credit,
-        //       firstsemestergrade: student.Cur_U_1st_Sem_Grade,
-        //       secondsemestercreditunit: student.Cur_U_2nd_Sem_Credit,
-        //       secondsemestergrade: student.Cur_U_2nd_Sem_Grade,
-        //     };
-        //     // eslint-disable-next-line no-await-in-loop
-        //     await store.saveStudentData(studentObj);
-        //   }
-        //   res
-        //     .status(200)
-        //     .json({ status: 'success', message: 'file uploaded successfully' });
-        // }
+        if (!studentData) {
+            return new appError_1.default('Unable to convert file', 404);
+        }
+        if (studentData instanceof Array) {
+            let studentObj;
+            // eslint-disable-next-line no-restricted-syntax
+            for (const student of studentData) {
+                studentObj = {
+                    matno: student.matno,
+                    firstname: student.firstname,
+                    lastname: student.lastname,
+                    course: student.Course,
+                    attendance: student.Attendance,
+                    gender: student.Gender,
+                    ageatenrollment: student.Age_at_Enroll,
+                    region: student.Region,
+                    maritalstatus: student.Marital_Status,
+                    prevqualification: student.Prev_Qua,
+                    prevqualificationgrade: student.Prev_Qua_Grade,
+                    motherqualification: student.Mother_Qua,
+                    tuitionfee: student.Tui_Up_to_Date,
+                    fatherqualification: student.Father_Qua,
+                    admissiongrade: student.Adm_Grade,
+                    schorlarship: student.S_Holder,
+                    firstsemestercreditunit: student.Cur_U_1st_Sem_Credit,
+                    firstsemestergrade: student.Cur_U_1st_Sem_Grade,
+                    secondsemestercreditunit: student.Cur_U_2nd_Sem_Credit,
+                    secondsemestergrade: student.Cur_U_2nd_Sem_Grade,
+                };
+                // eslint-disable-next-line no-await-in-loop
+                if (!(yield store.getStudent(studentObj.matno))) {
+                    // eslint-disable-next-line no-await-in-loop
+                    yield store.saveStudentData(studentObj);
+                }
+                // eslint-disable-next-line no-await-in-loop
+                yield store.updateStudentData(studentObj);
+                // eslint-disable-next-line no-await-in-loop
+                yield store.predictStudent(studentObj.matno);
+            }
+            res
+                .status(200)
+                .json({ status: 'success', message: 'file uploaded successfully' });
+        }
     }
     catch (err) {
         return next(err);
@@ -307,3 +322,20 @@ const courseOfStudy = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.courseOfStudy = courseOfStudy;
+const search = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { queryString } = req.query;
+        const response = yield store.search(queryString);
+        res.status(200).json({
+            status: 'success',
+            results: response.length,
+            data: {
+                response,
+            },
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.search = search;
