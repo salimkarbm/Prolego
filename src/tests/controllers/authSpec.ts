@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import server from '../../server';
 
-describe('Test users endpoints', () => {
+xdescribe('Test users endpoints', () => {
   let originalTimeout: number;
   const request = supertest(server);
 

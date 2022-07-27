@@ -325,7 +325,13 @@ exports.courseOfStudy = courseOfStudy;
 const search = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { queryString } = req.query;
+        if (queryString === '') {
+            return next(new appError_1.default(`Please provide a search params`, 404));
+        }
         const response = yield store.search(queryString);
+        if (response.length === 0) {
+            return next(new appError_1.default(`not found`, 404));
+        }
         res.status(200).json({
             status: 'success',
             results: response.length,

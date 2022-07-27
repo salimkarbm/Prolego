@@ -28,7 +28,7 @@ export const create = async (
     firstname: req.body.firstname,
     lastname: req.body.lastname,
     email: req.body.email,
-    password: req.body.password,
+    password_digest: req.body.password,
   };
   try {
     const userEmail = await authStore.checkEmail(user.email);
@@ -36,7 +36,7 @@ export const create = async (
       return next(new AppError('user with this email already exist', 400));
     }
     const newUser = await authStore.create(user);
-    if (newUser) {
+    if (!newUser) {
       return next(new AppError('unable to create user', 400));
     }
     createSendToken(newUser, 201, req, res);
@@ -95,7 +95,7 @@ export const googleAuth = async (
           firstname: payload.given_name as string,
           lastname: payload.family_name as string,
           email: payload.email as string,
-          password: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+          password_digest: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
           google_id: payload.sub as string,
         };
         const userEmail = await authStore.checkEmail(user.email);
@@ -107,7 +107,7 @@ export const googleAuth = async (
             firstname: payload.given_name as string,
             lastname: payload.family_name as string,
             email: payload.email as string,
-            password: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+            password_digest: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
             google_id: payload.sub as string,
           };
           const newUser = await store.getUserByEmail(oldUser.email);

@@ -13,10 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const csvtojson_1 = __importDefault(require("csvtojson"));
-// import { StudentInfo } from './interface/studentInfo';
 const fileConverter = (csvFilePath) => __awaiter(void 0, void 0, void 0, function* () {
     const convertedFile = yield (0, csvtojson_1.default)().fromFile(csvFilePath);
-    const data = convertedFile.slice(0, 4);
+    const data = convertedFile.slice(0, 100);
     return data;
 });
 exports.default = fileConverter;

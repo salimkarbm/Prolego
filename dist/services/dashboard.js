@@ -277,7 +277,7 @@ class DashboardService {
                 return res;
             }
             catch (err) {
-                throw new appError_1.default(`Unable to fetch course from Database.`, 400);
+                throw new appError_1.default(`Unable to search student from Database.`, 400);
             }
         });
     }

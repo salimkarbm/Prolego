@@ -22,7 +22,7 @@ class AuthService {
             const newUser = {
                 firstName: user.firstname,
                 lastName: user.lastname,
-                password: user.password,
+                password: user.password_digest,
                 email: user.email,
             };
             try {
@@ -83,7 +83,7 @@ class AuthService {
             const newUser = {
                 firstName: user.firstname,
                 lastName: user.lastname,
-                password: user.password,
+                password: user.password_digest,
                 email: user.email,
                 googleId: user.google_id,
             };

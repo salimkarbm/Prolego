@@ -13,5 +13,6 @@ const dashboard = (app) => {
     app.get('/api/v1/students', dashboard_1.getAllStudent);
     app.get('/api/v1/students/:matno', dashboard_1.getStudent);
     app.get('/api/v1/studentscategory', dashboard_1.studentByCategory);
+    app.get('/api/v1/search', dashboard_1.search);
 };
 exports.default = dashboard;

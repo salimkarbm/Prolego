@@ -1,7 +1,7 @@
 import supertest from 'supertest';
 import server from '../../server';
 
-describe('User Handler', () => {
+xdescribe('Test User controller', () => {
   let originalTimeout: number;
   const request = supertest(server);
 
