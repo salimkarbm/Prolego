@@ -15,12 +15,6 @@ describe('Test auth model', () => {
     expect(user.email).toEqual('admin@example.com');
     expect(user.firstname).toEqual('admin');
   });
-
-  // it('create method should add a new user', async () => {
-  //   const user = await authStore.create(newUser);
-  //   expect(user.email).toEqual('user@gmail.com');
-  //   expect(user.firstname).toEqual('admin');
-  // });
   it('should have a create method', () => {
     expect(authStore.create).toBeDefined();
   });
@@ -66,21 +60,26 @@ describe('Test auth model', () => {
     expect(result).toBeTruthy();
   });
   it('authenticate method should validate the user', async () => {
-    const result = await authStore.authenticate(
-      'admin@example.com',
-      'pass1234'
-    );
+    const loginUser = {
+      email: 'admin@example.com',
+      password: 'pass1234',
+    };
+    const result = await authStore.authenticate(loginUser);
     expect(result).not.toBeNull();
     if (result) {
       expect(result.email).toEqual('admin@example.com');
     }
   });
   it('authenticate method should reject the user', async () => {
-    const result = await authStore.authenticate('userEmail', 'invalidpassword');
+    const loginUser = {
+      email: 'userEmail',
+      password: 'invalidpassword',
+    };
+    const result = await authStore.authenticate(loginUser);
     expect(result).toBeNull();
   });
 
-  it('it should have forgot password method', () => {
+  it('it should have reset password method', () => {
     expect(authStore.passwordResetToken).toBeDefined();
   });
 
@@ -90,5 +89,11 @@ describe('Test auth model', () => {
       '3hzc0fkip9h'
     );
     expect(result).toBeTruthy();
+  });
+  it('it should have update password method', () => {
+    expect(authStore.updatePassword).toBeDefined();
+  });
+  it('it should have upsertGoogleUser method', () => {
+    expect(authStore.upsertGoogleUser).toBeDefined();
   });
 });

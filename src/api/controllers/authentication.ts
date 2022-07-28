@@ -55,14 +55,11 @@ export const authenticate = async (
     return next(errors);
   }
   const loginUser: LoginUser = {
-    password: req.body.password,
     email: req.body.email,
+    password: req.body.password,
   };
   try {
-    const user = await authStore.authenticate(
-      loginUser.email,
-      loginUser.password
-    );
+    const user = await authStore.authenticate(loginUser);
     if (user === null) {
       return next(new AppError('incorrect email and password', 401));
     }
@@ -131,11 +128,11 @@ export const forgotPassword = async (
   res: Response,
   next: NextFunction
 ) => {
-  // get user base on  POSTED email
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(errors);
   }
+  // get user base on  POSTED email
   const { email } = req.body;
   // check if user exist
   const useremail = await authStore.checkEmail(email);

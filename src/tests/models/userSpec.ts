@@ -23,4 +23,7 @@ describe('Test user model', () => {
     expect(result.email).toEqual('admin@example.com');
     expect(store.getUserByEmail).toBeDefined();
   });
+  it('it should have update method', () => {
+    expect(store.update).toBeDefined();
+  });
 });

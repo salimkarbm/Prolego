@@ -58,11 +58,11 @@ const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         return next(errors);
     }
     const loginUser = {
-        password: req.body.password,
         email: req.body.email,
+        password: req.body.password,
     };
     try {
-        const user = yield authStore.authenticate(loginUser.email, loginUser.password);
+        const user = yield authStore.authenticate(loginUser);
         if (user === null) {
             return next(new appError_1.default('incorrect email and password', 401));
         }
@@ -123,11 +123,11 @@ const googleAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.googleAuth = googleAuth;
 const forgotPassword = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    // get user base on  POSTED email
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return next(errors);
     }
+    // get user base on  POSTED email
     const { email } = req.body;
     // check if user exist
     const useremail = yield authStore.checkEmail(email);
