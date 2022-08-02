@@ -1,8 +1,9 @@
 /* create students_info table */
 CREATE TABLE students_info (
-  id  serial PRIMARY KEY,
-  firstName varchar(50) ,
-  lastName varchar(50),
+  id  serial,
+  matno varchar(50) PRIMARY KEY,
+  firstName varchar(50) NOT NULL,
+  lastName varchar(50) NOT NULL,
   course varchar(50) NOT NULL,
   attendance varchar(50) NOT NULL,
   gender varchar(20) NOT NULL,
@@ -17,9 +18,9 @@ CREATE TABLE students_info (
   admissionGrade varchar(50) NOT NULL,
   schorlarship varchar(50) NOT NULL,
   firstSemesterCreditUnit varchar(50) NOT NULL,
-  firstSemesterGrade varchar(50) NOT NULL,
+  firstSemesterGrade DOUBLE PRECISION NOT NULL,
   secondSemesterCreditUnit varchar(50) NOT NULL,
-  secondSemesterGrade varchar(50) NOT NULL,
+  secondSemesterGrade DOUBLE PRECISION NOT NULL,
   studentStatus varchar(50),
   createdAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP);
   

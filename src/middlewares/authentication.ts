@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import UserStore from '../models/user';
 import { jwtToken } from '../utils/interface/user';
 import { secret } from '../utils/jwtCredentials';
+import AppError from '../utils/errors/appError';
 
 const store = new UserStore();
 
@@ -20,21 +21,24 @@ const verifyAuthToken = async (
       token = req.headers.authorization.split(' ')[1];
     }
     if (!token) {
-      return res
-        .status(401)
-        .json({ error: 'You are not logged in! please login to gain access.' });
+      return next(
+        new AppError('The user belonging to this token no longer exist', 401)
+      );
     }
     const decoded = jwt.verify(token, secret) as jwtToken;
+    if (!decoded) {
+      return next(new AppError('invalid token', 401));
+    }
     const currentUser = await store.getUserById(decoded.id);
     if (!currentUser) {
-      return res
-        .status(401)
-        .json({ message: 'The user belonging to this token no longer exist' });
+      return next(
+        new AppError('You are not logged in! please login to gain access.', 401)
+      );
     }
     req.user = currentUser;
     next();
   } catch (error) {
-    res.status(401).json({ message: 'invalid token' });
+    next(error);
   }
 };
 

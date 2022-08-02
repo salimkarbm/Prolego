@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_1 = __importDefault(require("../models/user"));
 const jwtCredentials_1 = require("../utils/jwtCredentials");
+const appError_1 = __importDefault(require("../utils/errors/appError"));
 const store = new user_1.default();
 const verifyAuthToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -24,22 +25,21 @@ const verifyAuthToken = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
             token = req.headers.authorization.split(' ')[1];
         }
         if (!token) {
-            return res
-                .status(401)
-                .json({ error: 'You are not logged in! please login to gain access.' });
+            return next(new appError_1.default('The user belonging to this token no longer exist', 401));
         }
         const decoded = jsonwebtoken_1.default.verify(token, jwtCredentials_1.secret);
+        if (!decoded) {
+            return next(new appError_1.default('invalid token', 401));
+        }
         const currentUser = yield store.getUserById(decoded.id);
         if (!currentUser) {
-            return res
-                .status(401)
-                .json({ message: 'The user belonging to this token no longer exist' });
+            return next(new appError_1.default('You are not logged in! please login to gain access.', 401));
         }
         req.user = currentUser;
         next();
     }
     catch (error) {
-        res.status(401).json({ message: 'invalid token' });
+        next(error);
     }
 });
 exports.default = verifyAuthToken;

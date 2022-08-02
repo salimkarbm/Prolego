@@ -28,7 +28,7 @@ export const create = async (
     firstname: req.body.firstname,
     lastname: req.body.lastname,
     email: req.body.email,
-    password: req.body.password,
+    password_digest: req.body.password,
   };
   try {
     const userEmail = await authStore.checkEmail(user.email);
@@ -36,6 +36,9 @@ export const create = async (
       return next(new AppError('user with this email already exist', 400));
     }
     const newUser = await authStore.create(user);
+    if (!newUser) {
+      return next(new AppError('unable to create user', 400));
+    }
     createSendToken(newUser, 201, req, res);
   } catch (err) {
     return next(err);
@@ -52,14 +55,11 @@ export const authenticate = async (
     return next(errors);
   }
   const loginUser: LoginUser = {
-    password: req.body.password,
     email: req.body.email,
+    password: req.body.password,
   };
   try {
-    const user = await authStore.authenticate(
-      loginUser.email,
-      loginUser.password
-    );
+    const user = await authStore.authenticate(loginUser);
     if (user === null) {
       return next(new AppError('incorrect email and password', 401));
     }
@@ -92,7 +92,7 @@ export const googleAuth = async (
           firstname: payload.given_name as string,
           lastname: payload.family_name as string,
           email: payload.email as string,
-          password: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+          password_digest: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
           google_id: payload.sub as string,
         };
         const userEmail = await authStore.checkEmail(user.email);
@@ -104,7 +104,7 @@ export const googleAuth = async (
             firstname: payload.given_name as string,
             lastname: payload.family_name as string,
             email: payload.email as string,
-            password: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+            password_digest: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
             google_id: payload.sub as string,
           };
           const newUser = await store.getUserByEmail(oldUser.email);
@@ -128,11 +128,11 @@ export const forgotPassword = async (
   res: Response,
   next: NextFunction
 ) => {
-  // get user base on  POSTED email
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(errors);
   }
+  // get user base on  POSTED email
   const { email } = req.body;
   // check if user exist
   const useremail = await authStore.checkEmail(email);

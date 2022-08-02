@@ -19,7 +19,7 @@ class StudentInfoStore {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();
-                const sql = `INSERT INTO students_info (firstName,lastName,course,attendance,gender,ageAtEnrollment,region,maritalStatus,prevQualification,prevQualificationGrade,motherQualification,tuitionFee,fatherQualification,admissionGrade,schorlarship,firstSemesterCreditUnit,firstSemesterGrade,secondSemesterCreditUnit,secondSemesterGrade) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19 ) RETURNING *`;
+                const sql = `INSERT INTO students_info (matNo,firstName,lastName,course,attendance,gender,ageAtEnrollment,region,maritalStatus,prevQualification,prevQualificationGrade,motherQualification,tuitionFee,fatherQualification,admissionGrade,schorlarship,firstSemesterCreditUnit,firstSemesterGrade,secondSemesterCreditUnit studentstatus,secondSemesterGrade) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,$20,$21) RETURNING *`;
                 const data = Object.values(studenData);
                 const res = yield conn.query(sql, data);
                 conn.release();
@@ -34,7 +34,7 @@ class StudentInfoStore {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();
-                const sql = 'SELECT * FROM students_info';
+                const sql = 'SELECT * FROM students_info LIMIT 100 ';
                 const result = yield conn.query(sql);
                 conn.release();
                 return result.rows;
@@ -44,18 +44,18 @@ class StudentInfoStore {
             }
         });
     }
-    show(id) {
+    show(studentId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `SELECT * FROM students_info WHERE id=($1)`;
+                const sql = `SELECT * FROM students_info WHERE matno=($1)`;
                 const conn = yield database_1.default.client.connect();
-                const result = yield conn.query(sql, [id]);
+                const result = yield conn.query(sql, [studentId]);
                 const student = result.rows[0];
                 conn.release();
                 return student;
             }
             catch (err) {
-                throw new appError_1.default(`unable find student with id ${id}.`, 400);
+                throw new appError_1.default(`unable find student with id ${studentId}.`, 400);
             }
         });
     }

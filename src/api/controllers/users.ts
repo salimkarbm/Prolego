@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
+import { validationResult } from 'express-validator';
 import UserStore from '../../models/user';
 import AppError from '../../utils/errors/appError';
+import createSendToken from '../../utils/httpsCookie';
 
 const store = new UserStore();
 
@@ -35,6 +37,10 @@ export const getUserByEmail = async (
   res: Response,
   next: NextFunction
 ) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(errors);
+  }
   try {
     const email = req.body.email as string;
     const user = await store.getUserByEmail(email);
@@ -56,11 +62,15 @@ export const getUserByEmail = async (
   }
 };
 
-export const index = async (req: Request, res: Response) => {
+export const index = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const users = await store.index();
     if (!users) {
-      return new AppError('users not found', 400);
+      return next(new AppError('users not found', 404));
     }
     const allUser = users.map((el) => {
       const userObj = {
@@ -75,11 +85,37 @@ export const index = async (req: Request, res: Response) => {
     });
     res.status(200).json({
       status: 'success',
+      result: allUser.length,
       data: {
         allUser,
       },
     });
   } catch (err) {
     throw new AppError('Something went wrong, Unable to get users', 400);
+  }
+};
+
+export const changedPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(errors);
+  }
+  const { password } = req.body;
+  try {
+    const user = await store.getUserById(req.user.id as number);
+    if (!user) {
+      return next(new AppError('user not found', 400));
+    }
+    const updatedUser = await store.update(user.id as number, password);
+    if (!user) {
+      return next(new AppError('unable to update user', 400));
+    }
+    createSendToken(updatedUser, 200, req, res);
+  } catch (err) {
+    next(err);
   }
 };

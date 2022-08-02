@@ -1,6 +1,11 @@
 import bcrypt from 'bcrypt';
 import DB from '../config/database';
-import { User, GoogleUser, UpdateUser } from '../utils/interface/user';
+import {
+  User,
+  GoogleUser,
+  UpdateUser,
+  LoginUser,
+} from '../utils/interface/user';
 import AppError from '../utils/errors/appError';
 import { pepper, saltRound } from '../utils/bcryptCredentials';
 
@@ -9,7 +14,7 @@ class AuthService {
     const newUser = {
       firstName: user.firstname,
       lastName: user.lastname,
-      password: user.password,
+      password: user.password_digest,
       email: user.email,
     };
     try {
@@ -31,15 +36,20 @@ class AuthService {
     }
   }
 
-  async authenticate(email: string, password: string): Promise<User | null> {
+  async authenticate(loggingInUser: LoginUser): Promise<User | null> {
     try {
       const conn = await DB.client.connect();
       const sql = `SELECT id, email, password_digest FROM users WHERE email=$1`;
-      const result = await conn.query(sql, [email]);
+      const result = await conn.query(sql, [loggingInUser.email]);
       conn.release();
       if (result.rows.length > 0) {
         const user = result.rows[0];
-        if (await bcrypt.compare(password + pepper, user.password_digest)) {
+        if (
+          await bcrypt.compare(
+            loggingInUser.password + pepper,
+            user.password_digest
+          )
+        ) {
           return user;
         }
         return null;
@@ -66,7 +76,7 @@ class AuthService {
     const newUser = {
       firstName: user.firstname,
       lastName: user.lastname,
-      password: user.password,
+      password: user.password_digest,
       email: user.email,
       googleId: user.google_id,
     };

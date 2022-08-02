@@ -1,19 +1,36 @@
 import supertest from 'supertest';
+// import jwt from 'jsonwebtoken';
 import server from '../../server';
+import { User } from '../../utils/interface/user';
+// import { secret } from '../../utils/jwtCredentials';
 
-describe('User Handler', () => {
-  let originalTimeout: number;
+describe('Test User controller', () => {
   const request = supertest(server);
-
-  beforeEach(function () {
-    originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+  let accessToken: string;
+  let user: User;
+  beforeAll(async () => {
+    await request
+      .post('/api/v1/signup')
+      .set('Accept', 'application/json')
+      .send({
+        firstname: 'user3',
+        lastname: 'user3',
+        email: 'user3@gmail.com',
+        password: 'pass1234',
+      });
+    const response = await request
+      .post('/api/v1/login')
+      .set('Accept', 'application/json')
+      .send({
+        email: 'user3@gmail.com',
+        password: 'pass1234',
+      });
+    const { token } = response.body;
+    // const decoded = jwt.verify(token, secret) as jwtToken;
+    accessToken = `Bearer ${token};`;
+    user = response.body.data;
   });
-
-  afterEach(function () {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
-  });
-  it('should require on GET /api/v1/users', (done) => {
+  xit('/api/v1/users should  not return all users', (done) => {
     request.get('/api/v1/users').then((res) => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBeFalsy();
@@ -21,17 +38,19 @@ describe('User Handler', () => {
     });
   });
 
-  it('Request /api/v1/users/:id to return a single user', (done) => {
-    request.get('/api/v1/users/1').then((res) => {
-      expect(res.status).toBe(200);
-      expect(res.body.status).toEqual('success');
-      done();
-    });
+  it('Request /api/v1/users/:id to return a single user', async () => {
+    if (accessToken && user) {
+      const response = await request
+        .get(`/api/v1/users/${user.id as number}`)
+        .set('Accept', 'application/json')
+        .set('authorization', accessToken);
+      expect(response.body.status).toBe(200);
+      expect(response.body.status).toEqual('success');
+    }
   });
 
   it('should return all users', async () => {
     const response = await request.get('/api/v1/users');
-    console.log(response);
     expect(response.status).toBe(200);
     expect(response.body).toBeTruthy();
   });
@@ -49,6 +68,7 @@ describe('User Handler', () => {
       .get('/api/v1/users')
       .set('Accept', 'application/json');
     expect(response.body.status).toEqual('success');
-    expect(response.body.data.allUser).toEqual([]);
+    expect(response.body).toBeInstanceOf(Array);
   });
 });
+// });

@@ -34,7 +34,7 @@ const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         email: req.body.email,
-        password: req.body.password,
+        password_digest: req.body.password,
     };
     try {
         const userEmail = yield authStore.checkEmail(user.email);
@@ -42,6 +42,9 @@ const create = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
             return next(new appError_1.default('user with this email already exist', 400));
         }
         const newUser = yield authStore.create(user);
+        if (!newUser) {
+            return next(new appError_1.default('unable to create user', 400));
+        }
         (0, httpsCookie_1.default)(newUser, 201, req, res);
     }
     catch (err) {
@@ -55,11 +58,11 @@ const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         return next(errors);
     }
     const loginUser = {
-        password: req.body.password,
         email: req.body.email,
+        password: req.body.password,
     };
     try {
-        const user = yield authStore.authenticate(loginUser.email, loginUser.password);
+        const user = yield authStore.authenticate(loginUser);
         if (user === null) {
             return next(new appError_1.default('incorrect email and password', 401));
         }
@@ -90,7 +93,7 @@ const googleAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
                         firstname: payload.given_name,
                         lastname: payload.family_name,
                         email: payload.email,
-                        password: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+                        password_digest: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
                         google_id: payload.sub,
                     };
                     const userEmail = yield authStore.checkEmail(user.email);
@@ -103,7 +106,7 @@ const googleAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
                             firstname: payload.given_name,
                             lastname: payload.family_name,
                             email: payload.email,
-                            password: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+                            password_digest: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
                             google_id: payload.sub,
                         };
                         const newUser = yield store.getUserByEmail(oldUser.email);
@@ -120,11 +123,11 @@ const googleAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.googleAuth = googleAuth;
 const forgotPassword = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    // get user base on  POSTED email
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return next(errors);
     }
+    // get user base on  POSTED email
     const { email } = req.body;
     // check if user exist
     const useremail = yield authStore.checkEmail(email);

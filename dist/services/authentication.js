@@ -22,7 +22,7 @@ class AuthService {
             const newUser = {
                 firstName: user.firstname,
                 lastName: user.lastname,
-                password: user.password,
+                password: user.password_digest,
                 email: user.email,
             };
             try {
@@ -43,16 +43,16 @@ class AuthService {
             }
         });
     }
-    authenticate(email, password) {
+    authenticate(loggingInUser) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();
                 const sql = `SELECT id, email, password_digest FROM users WHERE email=$1`;
-                const result = yield conn.query(sql, [email]);
+                const result = yield conn.query(sql, [loggingInUser.email]);
                 conn.release();
                 if (result.rows.length > 0) {
                     const user = result.rows[0];
-                    if (yield bcrypt_1.default.compare(password + bcryptCredentials_1.pepper, user.password_digest)) {
+                    if (yield bcrypt_1.default.compare(loggingInUser.password + bcryptCredentials_1.pepper, user.password_digest)) {
                         return user;
                     }
                     return null;
@@ -83,7 +83,7 @@ class AuthService {
             const newUser = {
                 firstName: user.firstname,
                 lastName: user.lastname,
-                password: user.password,
+                password: user.password_digest,
                 email: user.email,
                 googleId: user.google_id,
             };
