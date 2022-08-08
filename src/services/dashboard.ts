@@ -62,9 +62,12 @@ class DashboardService {
     }
   }
 
-  async studentCategory(status: string): Promise<StudentInfo[]> {
+  async studentCategory(
+    status: string,
+    limit: number | string
+  ): Promise<StudentInfo[]> {
     try {
-      const sql = `SELECT * FROM students_info WHERE students_info.studentstatus=($1) OR students_info.gender=($1) OR students_info.maritalstatus=($1) OR students_info.region=($1) OR students_info.schorlarship=($1) `;
+      const sql = `SELECT * FROM students_info  WHERE students_info.studentstatus=($1) OR students_info.gender=($1) OR students_info.maritalstatus=($1) OR students_info.region=($1) OR students_info.schorlarship=($1) ORDER BY students_info.secondsemestergrade DESC LIMIT  ${limit} `;
       const conn = await DB.client.connect();
       const result = await conn.query(sql, [status]);
       conn.release();

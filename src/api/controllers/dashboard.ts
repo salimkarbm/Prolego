@@ -134,10 +134,14 @@ export const studentByCategory = async (
 ) => {
   try {
     const status = req.query.category as string;
+    let limit = req.query.limit as unknown as number | string;
+    if (limit === undefined || '') {
+      limit = 'ALL';
+    }
     if (status === '') {
       return next(new AppError(`Please provide a course`, 404));
     }
-    const category = await store.studentCategory(status);
+    const category = await store.studentCategory(status, limit);
     if (!category) {
       return next(new AppError(`This ${status} does not exist`, 404));
     }

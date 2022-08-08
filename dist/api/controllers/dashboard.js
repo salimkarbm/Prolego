@@ -217,22 +217,13 @@ const predictionSummary = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     const totalNumberOfgraduates = yield store.graduate();
     const totalNumberOfdropouts = yield store.dropout();
     try {
-        const arr = [];
+        const data = [];
         const summary = {
-            totalNumberOfStudents,
-            totalNumberOfgraduates,
-            totalNumberOfdropouts,
+            totalNumberOfStudents: totalNumberOfStudents.count,
+            totalNumberOfgraduates: totalNumberOfgraduates.count,
+            totalNumberOfdropouts: totalNumberOfdropouts.count,
         };
-        const data = arr.push(summary);
-        // const dropoutStudents =
-        //   (((dropouts.count as number) / totalNumberOfStudents.count) as number) *
-        //   100;
-        // const graduatedStudents =
-        //   (((graduates.count as number) / totalNumberOfStudents.count) as number) *
-        //   100;
-        // const totalStudents = totalNumberOfStudents.count as number;
-        // const percentageOfDropoutStudents = `${dropoutStudents}%`;
-        // const percentageOfgraduatedStudents = `${graduatedStudents}%`;
+        data.push(summary);
         res.status(200).json({
             status: 'success',
             data,
