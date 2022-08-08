@@ -11,6 +11,7 @@ import {
   region,
   motherQua,
   StudentInfo,
+  StudentCount,
 } from '../../utils/interface/studentInfo';
 
 const cwd = process.cwd();
@@ -278,28 +279,20 @@ export const predictionSummary = async (
   res: Response,
   next: NextFunction
 ) => {
-  const totalNumberOfStudents = await store.totalStudents();
-  const graduates = await store.graduate();
-  const dropouts = await store.dropout();
+  const totalNumberOfStudents: StudentCount = await store.totalStudents();
+  const totalNumberOfgraduates: StudentCount = await store.graduate();
+  const totalNumberOfdropouts: StudentCount = await store.dropout();
   try {
-    const dropoutStudents =
-      (((dropouts.count as number) / totalNumberOfStudents.count) as number) *
-      100;
-    const graduatedStudents =
-      (((graduates.count as number) / totalNumberOfStudents.count) as number) *
-      100;
-
-    const totalStudents = totalNumberOfStudents.count as number;
-    const percentageOfDropoutStudents = `${dropoutStudents}%`;
-    const percentageOfgraduatedStudents = `${graduatedStudents}%`;
-
+    const data = [];
+    const summary = {
+      totalNumberOfStudents: totalNumberOfStudents.count,
+      totalNumberOfgraduates: totalNumberOfgraduates.count,
+      totalNumberOfdropouts: totalNumberOfdropouts.count,
+    };
+    data.push(summary);
     res.status(200).json({
       status: 'success',
-      data: {
-        totalStudents,
-        percentageOfDropoutStudents,
-        percentageOfgraduatedStudents,
-      },
+      data,
     });
   } catch (err) {
     next(err);

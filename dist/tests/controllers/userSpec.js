@@ -39,7 +39,6 @@ describe('Test User controller', () => {
         });
         const { token } = response.body;
         // const decoded = jwt.verify(token, secret) as jwtToken;
-        // console.log(decoded);
         accessToken = `Bearer ${token};`;
         user = response.body.data;
     }));
@@ -50,17 +49,14 @@ describe('Test User controller', () => {
             done();
         });
     });
-    fit('Request /api/v1/users/:id to return a single user', () => __awaiter(void 0, void 0, void 0, function* () {
-        console.log(accessToken);
+    it('Request /api/v1/users/:id to return a single user', () => __awaiter(void 0, void 0, void 0, function* () {
         if (accessToken && user) {
-            yield request
+            const response = yield request
                 .get(`/api/v1/users/${user.id}`)
                 .set('Accept', 'application/json')
                 .set('authorization', accessToken);
-            // const response =
-            // console.log(response);
-            //   // expect(response.body.status).toBe(200);
-            //   // expect(response.body.status).toEqual('success');
+            expect(response.body.status).toBe(200);
+            expect(response.body.status).toEqual('success');
         }
     }));
     it('should return all users', () => __awaiter(void 0, void 0, void 0, function* () {
@@ -81,7 +77,7 @@ describe('Test User controller', () => {
             .get('/api/v1/users')
             .set('Accept', 'application/json');
         expect(response.body.status).toEqual('success');
-        // expect(response.body).toEqual(3 || 5 || 1);
+        expect(response.body).toBeInstanceOf(Array);
     }));
 });
 // });

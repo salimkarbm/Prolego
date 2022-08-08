@@ -214,23 +214,28 @@ const predictStudentById = (req, res, next) => __awaiter(void 0, void 0, void 0,
 exports.predictStudentById = predictStudentById;
 const predictionSummary = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const totalNumberOfStudents = yield store.totalStudents();
-    const graduates = yield store.graduate();
-    const dropouts = yield store.dropout();
+    const totalNumberOfgraduates = yield store.graduate();
+    const totalNumberOfdropouts = yield store.dropout();
     try {
-        const dropoutStudents = (dropouts.count / totalNumberOfStudents.count) *
-            100;
-        const graduatedStudents = (graduates.count / totalNumberOfStudents.count) *
-            100;
-        const totalStudents = totalNumberOfStudents.count;
-        const percentageOfDropoutStudents = `${dropoutStudents}%`;
-        const percentageOfgraduatedStudents = `${graduatedStudents}%`;
+        const arr = [];
+        const summary = {
+            totalNumberOfStudents,
+            totalNumberOfgraduates,
+            totalNumberOfdropouts,
+        };
+        const data = arr.push(summary);
+        // const dropoutStudents =
+        //   (((dropouts.count as number) / totalNumberOfStudents.count) as number) *
+        //   100;
+        // const graduatedStudents =
+        //   (((graduates.count as number) / totalNumberOfStudents.count) as number) *
+        //   100;
+        // const totalStudents = totalNumberOfStudents.count as number;
+        // const percentageOfDropoutStudents = `${dropoutStudents}%`;
+        // const percentageOfgraduatedStudents = `${graduatedStudents}%`;
         res.status(200).json({
             status: 'success',
-            data: {
-                totalStudents,
-                percentageOfDropoutStudents,
-                percentageOfgraduatedStudents,
-            },
+            data,
         });
     }
     catch (err) {
