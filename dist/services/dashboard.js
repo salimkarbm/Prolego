@@ -178,7 +178,7 @@ class DashboardService {
             }
         });
     }
-    studentAttendance(category) {
+    courseAttendance(category) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const sql = `SELECT COUNT(*) FROM students_info WHERE  course = '${category}' OR gender ='${category}'`;
@@ -251,7 +251,22 @@ class DashboardService {
             }
         });
     }
-    availableCourses() {
+    getCourse(course) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const conn = yield database_1.default.client.connect();
+                const sql = `SELECT course FROM students_info WHERE course = '${course}' `;
+                const result = yield conn.query(sql);
+                conn.release();
+                const res = result.rows[0];
+                return res;
+            }
+            catch (err) {
+                throw new appError_1.default(`Unable to fetch course from Database.`, 400);
+            }
+        });
+    }
+    courses() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.search = exports.courseOfStudy = exports.top5studentsbycourse = exports.top5students = exports.attendance = exports.predictionSummary = exports.predictStudentById = exports.predictAll = exports.studentByCategory = exports.getStudent = exports.getAllStudent = exports.upload = void 0;
+exports.search = exports.courseOfStudy = exports.top5studentsbycourse = exports.top5students = exports.courseAttendance = exports.predictionSummary = exports.predictStudentById = exports.predictAll = exports.studentByCategory = exports.getStudent = exports.getAllStudent = exports.upload = void 0;
 const axios_1 = __importDefault(require("axios"));
 const path_1 = __importDefault(require("path"));
 const csvtojsonConverter_1 = __importDefault(require("../../utils/csvtojsonConverter"));
@@ -85,7 +85,10 @@ const upload = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
 exports.upload = upload;
 const getAllStudent = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const limit = req.query.limit;
+        let limit = req.query.limit;
+        if (limit === undefined || '') {
+            limit = 'ALL';
+        }
         const students = yield store.getAllStudent(limit);
         if (!students) {
             return next(new appError_1.default('Unable to fetch students from database', 400));
@@ -239,35 +242,42 @@ const predictionSummary = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.predictionSummary = predictionSummary;
-const attendance = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const courseAttendance = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { course } = req.query;
     if (course === '') {
         return next(new appError_1.default(`Please provide a course`, 404));
     }
-    const totalAttendance = yield store.studentAttendance(course);
+    const totalAttendance = yield store.getCourse(course);
     if (!totalAttendance) {
         return next(new appError_1.default(`This ${course} does not exist`, 404));
     }
-    const absent = yield store.absentAttendance(course);
-    const present = yield store.presentAttendance(course);
+    const getcourse = yield store.absentAttendance(course);
+    const numberOfStudentsabsent = yield store.absentAttendance(course);
+    const numberOfStudentspresent = yield store.presentAttendance(course);
     try {
-        const studentAbsent = (absent.count / totalAttendance.count) * 100;
-        const studentPresent = (present.count / totalAttendance.count) * 100;
-        const percentageOfStudentAbsent = `${studentAbsent}%`;
-        const percentageOfStudentPresent = `${studentPresent}%`;
+        const data = [];
+        const attendance = {
+            course: getcourse.count,
+            numberOfStudentsabsent: numberOfStudentsabsent.count,
+            numberOfStudentspresent: numberOfStudentspresent.count,
+        };
+        data.push(attendance);
+        // const studentAbsent =
+        //   (((absent.count as number) / totalAttendance.count) as number) * 100;
+        // const studentPresent =
+        //   (((present.count as number) / totalAttendance.count) as number) * 100;
+        // const percentageOfStudentAbsent = `${studentAbsent}%`;
+        // const percentageOfStudentPresent = `${studentPresent}%`;
         res.status(200).json({
             status: 'success',
-            data: {
-                percentageOfStudentAbsent,
-                percentageOfStudentPresent,
-            },
+            data,
         });
     }
     catch (err) {
         next(err);
     }
 });
-exports.attendance = attendance;
+exports.courseAttendance = courseAttendance;
 const top5students = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const top5student = yield store.top5students();
@@ -309,7 +319,7 @@ const top5studentsbycourse = (req, res, next) => __awaiter(void 0, void 0, void 
 exports.top5studentsbycourse = top5studentsbycourse;
 const courseOfStudy = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const availableCourses = yield store.availableCourses();
+        const availableCourses = yield store.courses();
         res.status(200).json({
             status: 'success',
             results: availableCourses.length,

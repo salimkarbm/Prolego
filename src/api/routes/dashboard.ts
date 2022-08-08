@@ -3,7 +3,7 @@ import express from 'express';
 import {
   predictionSummary,
   predictStudentById,
-  attendance,
+  courseAttendance,
   predictAll,
   top5students,
   top5studentsbycourse,
@@ -18,7 +18,7 @@ import {
 const dashboard = (app: express.Application) => {
   app.patch('/api/v1/predict', predictAll);
   app.post('/api/v1/predict/:matno', predictStudentById);
-  app.get('/api/v1/attendance', attendance);
+  app.get('/api/v1/attendance', courseAttendance);
   app.get('/api/v1/courses', courseOfStudy);
   app.get('/api/v1/predictionsummary', predictionSummary);
   app.get('/api/v1/top5students', top5students);

@@ -307,7 +307,7 @@ export const predictionSummary = async (
   }
 };
 
-export const attendance = async (
+export const courseAttendance = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -317,28 +317,25 @@ export const attendance = async (
     return next(new AppError(`Please provide a course`, 404));
   }
 
-  const totalAttendance = await store.studentAttendance(course as string);
-  if (!totalAttendance) {
+  const courseOfStudy = await store.getCourse(course as string);
+  if (!courseOfStudy) {
     return next(new AppError(`This ${course} does not exist`, 404));
   }
-
-  const absent = await store.absentAttendance(course as string);
-  const present = await store.presentAttendance(course as string);
+  const numberOfStudentsabsent = await store.absentAttendance(course as string);
+  const numberOfStudentspresent = await store.presentAttendance(
+    course as string
+  );
   try {
-    const studentAbsent =
-      (((absent.count as number) / totalAttendance.count) as number) * 100;
-    const studentPresent =
-      (((present.count as number) / totalAttendance.count) as number) * 100;
-
-    const percentageOfStudentAbsent = `${studentAbsent}%`;
-    const percentageOfStudentPresent = `${studentPresent}%`;
-
+    const data = [];
+    const attendance = {
+      course: courseOfStudy.course,
+      numberOfStudentsabsent: numberOfStudentsabsent.count,
+      numberOfStudentspresent: numberOfStudentspresent.count,
+    };
+    data.push(attendance);
     res.status(200).json({
       status: 'success',
-      data: {
-        percentageOfStudentAbsent,
-        percentageOfStudentPresent,
-      },
+      data,
     });
   } catch (err) {
     next(err);
@@ -396,7 +393,7 @@ export const courseOfStudy = async (
   next: NextFunction
 ) => {
   try {
-    const availableCourses = await store.availableCourses();
+    const availableCourses = await store.courses();
     res.status(200).json({
       status: 'success',
       results: availableCourses.length,

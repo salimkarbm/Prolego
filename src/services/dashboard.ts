@@ -155,7 +155,7 @@ class DashboardService {
     }
   }
 
-  async studentAttendance(category: string): Promise<StudentCount> {
+  async courseAttendance(category: string): Promise<StudentCount> {
     try {
       const sql = `SELECT COUNT(*) FROM students_info WHERE  course = '${category}' OR gender ='${category}'`;
       const conn = await DB.client.connect();
@@ -218,7 +218,20 @@ class DashboardService {
     }
   }
 
-  async availableCourses(): Promise<Courses[]> {
+  async getCourse(course: string): Promise<Courses> {
+    try {
+      const conn = await DB.client.connect();
+      const sql = `SELECT course FROM students_info WHERE course = '${course}' `;
+      const result = await conn.query(sql);
+      conn.release();
+      const res = result.rows[0];
+      return res;
+    } catch (err) {
+      throw new AppError(`Unable to fetch course from Database.`, 400);
+    }
+  }
+
+  async courses(): Promise<Courses[]> {
     try {
       const conn = await DB.client.connect();
       const sql = `SELECT DISTINCT course FROM students_info `;
