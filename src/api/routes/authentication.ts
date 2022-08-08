@@ -52,7 +52,7 @@ const authRoutes = (app: express.Application) => {
     forgotPassword
   );
   app.patch(
-    '/api/v1/users/resetpassword/:token',
+    '/api/v1/users/auth/resetpassword',
     [
       check('password').trim().escape().notEmpty().isString(),
       check('confirmPassword').trim().escape().notEmpty().isString(),
