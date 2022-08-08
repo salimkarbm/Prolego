@@ -85,7 +85,8 @@ const upload = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
 exports.upload = upload;
 const getAllStudent = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const students = yield store.getAllStudent();
+        const limit = req.query.limit;
+        const students = yield store.getAllStudent(limit);
         if (!students) {
             return next(new appError_1.default('Unable to fetch students from database', 400));
         }
@@ -126,10 +127,14 @@ exports.getStudent = getStudent;
 const studentByCategory = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const status = req.query.category;
+        let limit = req.query.limit;
+        if (limit === undefined || '') {
+            limit = 'ALL';
+        }
         if (status === '') {
             return next(new appError_1.default(`Please provide a course`, 404));
         }
-        const category = yield store.studentCategory(status);
+        const category = yield store.studentCategory(status, limit);
         if (!category) {
             return next(new appError_1.default(`This ${status} does not exist`, 404));
         }

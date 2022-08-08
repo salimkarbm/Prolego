@@ -37,10 +37,10 @@ class DashboardService {
     }
   }
 
-  async getAllStudent(): Promise<StudentInfo[]> {
+  async getAllStudent(limit: number | string): Promise<StudentInfo[]> {
     try {
       const conn = await DB.client.connect();
-      const sql = 'SELECT * FROM students_info ORDER BY id ASC LIMIT 100';
+      const sql = `SELECT * FROM students_info ORDER BY id ASC LIMIT ${limit}`;
       const result = await conn.query(sql);
       conn.release();
       return result.rows;

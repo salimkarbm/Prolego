@@ -88,7 +88,11 @@ export const getAllStudent = async (
   next: NextFunction
 ) => {
   try {
-    const students = await store.getAllStudent();
+    let limit = req.query.limit as unknown as number | string;
+    if (limit === undefined || '') {
+      limit = 'ALL';
+    }
+    const students = await store.getAllStudent(limit);
     if (!students) {
       return next(new AppError('Unable to fetch students from database', 400));
     }

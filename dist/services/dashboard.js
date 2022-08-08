@@ -45,11 +45,11 @@ class DashboardService {
             }
         });
     }
-    getAllStudent() {
+    getAllStudent(limit) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();
-                const sql = 'SELECT * FROM students_info ORDER BY id ASC LIMIT 100';
+                const sql = `SELECT * FROM students_info ORDER BY id ASC LIMIT ${limit}`;
                 const result = yield conn.query(sql);
                 conn.release();
                 return result.rows;
@@ -74,10 +74,10 @@ class DashboardService {
             }
         });
     }
-    studentCategory(status) {
+    studentCategory(status, limit) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sql = `SELECT * FROM students_info WHERE students_info.studentstatus=($1) OR students_info.gender=($1) OR students_info.maritalstatus=($1) OR students_info.region=($1) OR students_info.schorlarship=($1) `;
+                const sql = `SELECT * FROM students_info  WHERE students_info.studentstatus=($1) OR students_info.gender=($1) OR students_info.maritalstatus=($1) OR students_info.region=($1) OR students_info.schorlarship=($1) ORDER BY students_info.secondsemestergrade DESC LIMIT  ${limit} `;
                 const conn = yield database_1.default.client.connect();
                 const result = yield conn.query(sql, [status]);
                 conn.release();
