@@ -247,27 +247,20 @@ const courseAttendance = (req, res, next) => __awaiter(void 0, void 0, void 0, f
     if (course === '') {
         return next(new appError_1.default(`Please provide a course`, 404));
     }
-    const totalAttendance = yield store.getCourse(course);
-    if (!totalAttendance) {
+    const courseOfStudy = yield store.getCourse(course);
+    if (!courseOfStudy) {
         return next(new appError_1.default(`This ${course} does not exist`, 404));
     }
-    const getcourse = yield store.absentAttendance(course);
     const numberOfStudentsabsent = yield store.absentAttendance(course);
     const numberOfStudentspresent = yield store.presentAttendance(course);
     try {
         const data = [];
         const attendance = {
-            course: getcourse.count,
+            course: courseOfStudy.course,
             numberOfStudentsabsent: numberOfStudentsabsent.count,
             numberOfStudentspresent: numberOfStudentspresent.count,
         };
         data.push(attendance);
-        // const studentAbsent =
-        //   (((absent.count as number) / totalAttendance.count) as number) * 100;
-        // const studentPresent =
-        //   (((present.count as number) / totalAttendance.count) as number) * 100;
-        // const percentageOfStudentAbsent = `${studentAbsent}%`;
-        // const percentageOfStudentPresent = `${studentPresent}%`;
         res.status(200).json({
             status: 'success',
             data,

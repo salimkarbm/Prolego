@@ -146,9 +146,11 @@ export const forgotPassword = async (
   await authStore.passwordResetToken(email, resetToken);
 
   // seed it to user's email
-  const resetUrl = `${req.protocol}://${req.get(
-    'host'
-  )}/api/v1/users/resetpassword/${resetToken}`;
+  const resetUrl = `http://localhost:3000/auth/resetpassword?email=${email}&code=${resetToken}`;
+
+  // const resetUrl = `${req.protocol}://${req.get(
+  //   'host'
+  // )}/api/v1/users/resetpassword/${resetToken}`;
 
   const message = `<div><p></p>We are sending you this email because you requested for password reset. click on this link <a href="${resetUrl}">${resetUrl}</a> to create a new password.</p><p>if you didn't request for password reset, you can ignore this email.</p></p></div>`;
   try {
@@ -180,13 +182,20 @@ export const resetPassword = async (
   if (!errors.isEmpty()) {
     return next(errors);
   }
-  const token = String(req.params.token);
+  const password = req.body.password as string;
+  const confirmPassword = req.body.password as string;
+  const token = String(req.query.token);
+  if (password !== confirmPassword) {
+    return next(
+      new AppError('password and confirm password do not match', 400)
+    );
+  }
   try {
     const user = await authStore.getUserByToken(token);
 
     // if token has not expired, and there is user set the new password
     if (user) {
-      await authStore.updatePassword(String(user.id), req.body.password);
+      await authStore.updatePassword(String(user.id), password);
       // create jwt token and send to client
       createSendToken(user, 200, req, res);
     } else {
