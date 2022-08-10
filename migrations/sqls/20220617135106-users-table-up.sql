@@ -10,5 +10,7 @@ CREATE TABLE users (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   google_id VARCHAR (100),
+  passwordResetExpires VARCHAR (150),
   passwordResetToken VARCHAR (150));
+  
   

@@ -80,14 +80,15 @@ describe('Test auth model', () => {
   });
 
   it('it should have reset password method', () => {
-    expect(authStore.passwordResetToken).toBeDefined();
+    expect(authStore.passwordReset).toBeDefined();
   });
 
   it('pasword reset method should return user', async () => {
-    const result = await authStore.passwordResetToken(
-      'admin@example.com',
-      '3hzc0fkip9h'
-    );
+    const userObj = {
+      passwordResetExpires: Date.now() + 10 * 60 * 1000,
+      passwordResetToken: '3hzc0fkip9h',
+    };
+    const result = await authStore.passwordReset('admin@example.com', userObj);
     expect(result).toBeTruthy();
   });
   it('it should have update password method', () => {

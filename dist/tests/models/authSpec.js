@@ -89,10 +89,14 @@ describe('Test auth model', () => {
         expect(result).toBeNull();
     }));
     it('it should have reset password method', () => {
-        expect(authStore.passwordResetToken).toBeDefined();
+        expect(authStore.passwordReset).toBeDefined();
     });
     it('pasword reset method should return user', () => __awaiter(void 0, void 0, void 0, function* () {
-        const result = yield authStore.passwordResetToken('admin@example.com', '3hzc0fkip9h');
+        const userObj = {
+            passwordResetExpires: Date.now() + 10 * 60 * 1000,
+            passwordResetToken: '3hzc0fkip9h',
+        };
+        const result = yield authStore.passwordReset('admin@example.com', userObj);
         expect(result).toBeTruthy();
     }));
     it('it should have update password method', () => {

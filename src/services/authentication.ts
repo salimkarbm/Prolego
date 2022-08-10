@@ -5,6 +5,7 @@ import {
   GoogleUser,
   UpdateUser,
   LoginUser,
+  ResetPassword,
 } from '../utils/interface/user';
 import AppError from '../utils/errors/appError';
 import { pepper, saltRound } from '../utils/bcryptCredentials';
@@ -100,18 +101,18 @@ class AuthService {
     }
   }
 
-  async passwordResetToken(
+  async passwordReset(
     email: string,
-    createpasswordToken: string
+    obj: ResetPassword
   ): Promise<UpdateUser[]> {
     try {
+      const { passwordResetToken, passwordResetExpires } = obj;
       const conn = await DB.client.connect();
-      const sql =
-        'UPDATE users SET passwordResetToken = ($1) WHERE email = ($2) RETURNING *';
-      const values = [createpasswordToken, email];
+      const sql = `UPDATE users SET passwordResetToken=($1), passwordResetExpires=($2) WHERE email=($3) RETURNING *`;
+      const values = [passwordResetToken, passwordResetExpires, email];
       const res = await conn.query(sql, values);
       conn.release();
-      return res.rows[0].email;
+      return res.rows[0];
     } catch (error) {
       throw new AppError(`Unable to get user from the database`, 400);
     }

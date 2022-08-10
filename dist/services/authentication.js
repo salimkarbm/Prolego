@@ -106,12 +106,12 @@ class AuthService {
             }
         });
     }
-    passwordResetToken(email, createpasswordToken) {
+    passwordReset(email, obj) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const conn = yield database_1.default.client.connect();
-                const sql = 'UPDATE users SET passwordResetToken = ($1) WHERE email = ($2) RETURNING *';
-                const values = [createpasswordToken, email];
+                const sql = `UPDATE users SET passwordResetToken =($1)  AND passwordResetExpires= ($2) WHERE email = ${email} RETURNING *`;
+                const values = [obj.passwordResetToken, obj.passwordResetExpires];
                 const res = yield conn.query(sql, values);
                 conn.release();
                 return res.rows[0].email;
